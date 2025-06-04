@@ -27,4 +27,3 @@ while True:
 
 
     params["page[number]"] += 1
-    
