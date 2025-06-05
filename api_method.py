@@ -33,9 +33,9 @@ while True:
         print("Error: ", page.json())
         print("Current Date: ", date)
         print("Page: ", pageNumber)
-        with open("progress.txt", 'a') as file:
-            file.write(f"Last Date: {date}\n")
-            file.write(f"Last Page: {pageNumber}")
+        with open("progress.txt", 'w') as file:
+            file.write(f"{date}\n")
+            file.write(str(pageNumber))
         break
 
     data = page.json()
@@ -55,7 +55,7 @@ while True:
             observation.append(comment["attributes"]["postedDate"])
             writer.writerow(observation)
 
-    if len(comments) < 250: 
+    if len(comments) < 250 or pageNumber == 40: 
         pageNumber = 1
         date = previousDay(date)
     else:
