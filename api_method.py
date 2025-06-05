@@ -11,8 +11,11 @@ def previousDay(date_str):
     obj = datetime.strptime(date_str, "%Y-%m-%d")
     return (obj - timedelta(days=1)).strftime("%Y-%m-%d")
 
-date = input("Starting Date: ")
-pageNumber = 1
+with open("progress.txt", 'r') as file:
+    lines = file.readlines()
+    date = lines[0].strip()
+    pageNumber = int(lines[1].strip())  
+
 iteration = 1
 while True:
     params = {
@@ -30,11 +33,15 @@ while True:
         print("Error: ", page.json())
         print("Current Date: ", date)
         print("Page: ", pageNumber)
+        with open("progress.txt", 'a') as file:
+            file.write(f"Last Date: {date}\n")
+            file.write(f"Last Page: {pageNumber}")
         break
 
     data = page.json()
     comments = data["data"]
     with open(rawdata, mode="a", newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
         for comment in comments:
             observation = []
             observation.append(comment["id"])
@@ -46,9 +53,8 @@ while True:
             observation.append(comment["attributes"]["title"])
             observation.append(comment["attributes"]["objectId"])
             observation.append(comment["attributes"]["postedDate"])
-
-            writer = csv.writer(file)
             writer.writerow(observation)
+
     if len(comments) < 250: 
         pageNumber = 1
         date = previousDay(date)
