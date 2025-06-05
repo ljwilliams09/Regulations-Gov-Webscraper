@@ -1,40 +1,59 @@
 import requests
 import csv
+from datetime import datetime, timedelta
 
 baseURL = "https://api.regulations.gov/v4/comments"
 api_key = input("API Key: ")
-rawdata = ("rawdata.csv")
-pages2parse = 100
+rawdata = "comments.csv"
+progress = "PROGRESS.txt"
 
-params = {
-    "page[number]" : 1,
+def previousDay(date_str):
+    obj = datetime.strptime(date_str, "%Y-%m-%d")
+    return (obj - timedelta(days=1)).strftime("%Y-%m-%d")
+
+date = input("Starting Date: ")
+pageNumber = 1
+iteration = 1
+while True:
+    params = {
+    "page[number]" : pageNumber,
     "api_key" : api_key,
-    "sort" : "-postedDate"
-}
-
-while params["page[number]"] < pages2parse + 1:
-    print(f"Fetching JSON data from page {params['page[number]']}")
+    "filter[postedDate]" : date,
+    "page[size]" : 250
+    }
+    print(f"Fetching data from {params['filter[postedDate]']} and page {params['page[number]']}. Iteration: {iteration}")
     page = requests.get(baseURL, params=params)
 
     if (page.status_code != 200):
         print("Error connecting!")
+        print("Status Code: ", page.status_code)
+        print("Error: ", page.json())
+        print("Current Date: ", date)
+        print("Page: ", pageNumber)
         break
 
     data = page.json()
     comments = data["data"]
-    for comment in comments:
-        observation = []
-        observation.append(comment["id"])
-        observation.append(comment["attributes"]["documentType"])
-        observation.append(comment["attributes"]["lastModifiedDate"])
-        observation.append(comment["attributes"]["highlightedContent"])
-        observation.append(comment["attributes"]["withdrawn"])
-        observation.append(comment["attributes"]["agencyId"])
-        observation.append(comment["attributes"]["title"])
-        observation.append(comment["attributes"]["objectId"])
-        observation.append(comment["attributes"]["postedDate"])
-        # observation.append(comment["links"]["self"])
-        with open(rawdata, mode="a", newline='', encoding='utf-8') as file:
+    with open(rawdata, mode="a", newline='', encoding='utf-8') as file:
+        for comment in comments:
+            observation = []
+            observation.append(comment["id"])
+            observation.append(comment["attributes"]["documentType"])
+            observation.append(comment["attributes"]["lastModifiedDate"])
+            observation.append(comment["attributes"]["highlightedContent"])
+            observation.append(comment["attributes"]["withdrawn"])
+            observation.append(comment["attributes"]["agencyId"])
+            observation.append(comment["attributes"]["title"])
+            observation.append(comment["attributes"]["objectId"])
+            observation.append(comment["attributes"]["postedDate"])
+
             writer = csv.writer(file)
             writer.writerow(observation)
-    params["page[number]"] += 1
+    if len(comments) < 250: 
+        pageNumber = 1
+        date = previousDay(date)
+    else:
+        pageNumber += 1
+    iteration += 1
+
+
