@@ -10,28 +10,35 @@ api_key = input("API Key: ")
 rawdata = "comments.csv"
 progress = "PROGRESS.txt"
 
-# Moves the date back to the day before
-def previousDay(date_str):
-    obj = datetime.strptime(date_str, "%Y-%m-%d")
-    return (obj - timedelta(days=1)).strftime("%Y-%m-%d")
+# Moves the dates back to the day before and resets their clocks to be at the ends
+def previousDay(startDate):
+    start = datetime.strptime(startDate, "%Y-%m-%d %H:%M:%S")
+    prev = start.date() - timedelta(days=1)
+    new_start = datetime.combine(prev, datetime.min.time()).strftime("%Y-%m-%d %H:%M:%S")
+    new_end = datetime.combine(prev, datetime.max.time().replace(microsecond=0)).strftime("%Y-%m-%d %H:%M:%S")
+    return new_end, new_start
 
 # get the variables from the txt file from the previous run
 with open("progress.txt", 'r') as file:
     lines = file.readlines()
-    date = lines[0].strip()
-    pageNumber = int(lines[1].strip())  
+    endDate = lines[0].strip()
+    startDate = lines[1].strip()
+    # pageNumber = int(lines[2].strip())  
 
-# Continue looping and break on a few conditions
+# Continue looping and break on a few conditions; each loop is a call to a new page of the API
 iteration = 1
+
 while True:
     # Parameters for which page and filters to be looking at since there is a pagination limit
     params = {
     "page[number]" : pageNumber,
     "api_key" : api_key,
-    "filter[lastModifiedDate][le]" : date,
+    "sort" : "-lastModifiedValue",
+    "filter[lastModifiedDate][le]" : endDate,
+    "filter[lastModifiedDate][ge]" : startDate,
     "page[size]" : 250
     }
-    print(f"Fetching data from {params['filter[postedDate]']} and page {params['page[number]']}. Iteration: {iteration}")
+    print(f"Fetching data from {params['filter[postedDate]']} and page {params['page[number]']}.  Page Call #: {iteration}")
 
     # Getting the page
     page = requests.get(baseURL, params=params)
@@ -46,8 +53,8 @@ while True:
         print("Page: ", pageNumber)
         # Write stopping point to txt file to start at
         with open("progress.txt", 'w') as file:
-            file.write(f"{date}\n")
-            file.write(str(pageNumber))
+            file.write(f"{endDate}\n")
+            file.write(f)
         break
 
     # Data is in the page in JSON
@@ -71,13 +78,13 @@ while True:
             observation.append(comment["links"]["self"])
             writer.writerow(observation)
 
-    #
-    if comments["hasNextPage"]: 
+    # Handle where there is a next page: we can keep going and there is no problem
+    if data["hasNextPage"]: 
         pageNumber += 1
-        date = previousDay(date)
+    # If there isn't a next page, there are two scenarios:
     else:
-        pageNumber = 1
-        date = previousDay(date)
+        # There are more than 10,000 comments in this filter, meaning that there are more past the 250 comments per page x 40 pages that we are able to see
+        if data["totalElememts"] > 10000:
+            endDate, startDate = previousDay(startDate)
+        
     iteration += 1
-
-
