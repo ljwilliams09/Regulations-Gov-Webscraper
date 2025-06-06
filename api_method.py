@@ -28,7 +28,7 @@ while True:
     params = {
     "page[number]" : pageNumber,
     "api_key" : api_key,
-    "filter[postedDate]" : date,
+    "filter[lastModifiedDate][le]" : date,
     "page[size]" : 250
     }
     print(f"Fetching data from {params['filter[postedDate]']} and page {params['page[number]']}. Iteration: {iteration}")
@@ -54,6 +54,7 @@ while True:
     data = page.json()
     comments = data["data"]
     # Write to CSV file
+
     with open(rawdata, mode="a", newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         for comment in comments:
@@ -71,11 +72,12 @@ while True:
             writer.writerow(observation)
 
     #
-    if not comments["hasNextPage"]: 
-        pageNumber = 1
+    if comments["hasNextPage"]: 
+        pageNumber += 1
         date = previousDay(date)
     else:
-        pageNumber += 1
+        pageNumber = 1
+        date = previousDay(date)
     iteration += 1
 
 
