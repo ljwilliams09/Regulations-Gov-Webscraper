@@ -37,8 +37,6 @@ while True:
         print("Status Code: ", page.status_code)
         print("Error: ", page.json())
         print("End Date and Time: ", date_time)
-        print("Page: ", pageNumber)
-        # Write stopping point to txt file to start a
         break
 
     # Data is in the page in JSON
@@ -75,9 +73,6 @@ while True:
         if data["meta"]["totalElements"] > 10000:
             pageNumber = 1
             date_time = lastDate
-
-    if iteration == 2:
-        break
     iteration += 1
 
 with open("progress.txt", 'w') as file:
