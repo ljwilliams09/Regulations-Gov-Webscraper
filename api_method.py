@@ -11,22 +11,15 @@ rawdata = "comments.csv"
 progress = "PROGRESS.txt"
 
 # Moves the dates back to the day before and resets their clocks to be at the ends
-def previousDay(startDate):
+def nextStart(startDate):
     start = datetime.strptime(startDate, "%Y-%m-%d %H:%M:%S")
     prev = start.date() - timedelta(days=1)
-    new_start = datetime.combine(prev, datetime.min.time()).strftime("%Y-%m-%d %H:%M:%S")
-    new_end = datetime.combine(prev, datetime.max.time().replace(microsecond=0)).strftime("%Y-%m-%d %H:%M:%S")
-    return new_end, new_start
+    return datetime.combine(prev, datetime.min.time()).strftime("%Y-%m-%d %H:%M:%S")
 
 # get the variables from the txt file from the previous run
 with open("progress.txt", 'r') as file:
     lines = file.readlines()
-    endDate = lines[0].strip()
-    startDate = lines[1].strip()
-    # pageNumber = int(lines[2].strip())  
-
-# Continue looping and break on a few conditions; each loop is a call to a new page of the API
-iteration = 1
+    startDate = lines[0].strip()
 
 while True:
     # Parameters for which page and filters to be looking at since there is a pagination limit
@@ -34,7 +27,6 @@ while True:
     "page[number]" : pageNumber,
     "api_key" : api_key,
     "sort" : "-lastModifiedValue",
-    "filter[lastModifiedDate][le]" : endDate,
     "filter[lastModifiedDate][ge]" : startDate,
     "page[size]" : 250
     }
@@ -42,10 +34,8 @@ while True:
 
     # Getting the page
     page = requests.get(baseURL, params=params)
-
-
     # Handle a failure and break
-    if (page.status_code != 200):
+    if (page.status_code != 200): # page limit is code 429
         print("Error connecting!")
         print("Status Code: ", page.status_code)
         print("Error: ", page.json())
