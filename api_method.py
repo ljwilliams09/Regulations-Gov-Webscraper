@@ -3,17 +3,21 @@ import csv
 from datetime import datetime, timedelta
 import json
 
+# regulations.gov API URL
+baseURL = "https://api.regulations.gov/v4/comments"
+api_key = "RWhAaanqXHMC89fGk755BO70rN8ygv1txMawAG3a"
+rawdata = "comments.csv"
+progress = "PROGRESS.txt"
+
 # get the variables from the txt and json file from the previous run
-with open("progress.txt", 'r') as file:
-    date_time = file.readline().strip()
+with open(progress, 'r') as file:
+    date_time = datetime.strptime(file.readline().strip(), "%Y-%m-%dT%H:%M:%SZ")
+    adjust_for_utc = date_time - timedelta(hours=4)
+    date_time = adjust_for_utc.strftime("%Y-%m-%d %H:%M:%S") 
+
 with open("seen_comments.json", "r") as seen:
     seen_comments = set(json.load(seen))
 
-# regulations.gov API URL
-baseURL = "https://api.regulations.gov/v4/comments"
-api_key = input("API Key: ")
-rawdata = "comments.csv"
-progress = "PROGRESS.txt"
 pageNumber = 1
 lastDate = date_time
 iteration = 1
@@ -22,10 +26,10 @@ while True:
     # Parameters for which page and filters to be looking at since there is a pagination limit
     params = {
     "api_key" : api_key,
-    "sort" : "lastModifiedDate",
+    "sort" : "lastModifiedDate,documentId",
     "filter[lastModifiedDate][ge]" : date_time,
     "page[number]" : pageNumber,
-    "page[size]" : 25
+    "page[size]" : 250
     }
     print(f"Fetching data from {params['filter[lastModifiedDate][ge]']}.  Page Call #: {iteration}")
 
@@ -61,23 +65,29 @@ while True:
                 # observation.append(comment["links"]["self"])
                 seen_comments.add(comment["id"])
                 writer.writerow(observation)
+            else:
+                print("Duplicate Found")
             lastDate = comment["attributes"]["lastModifiedDate"]
 
 
     # Handle where there is a next page: we can keep going and there is no problem
     if data["meta"]["hasNextPage"]: 
         pageNumber += 1
+        print("Has next page!")
     # If there isn't a next page, there are two scenarios:
     else:
-        # There are more than 10,000 comments in this filter, meaning that there are more past the 250 comments per page x 40 pages that we are able to see
-        if data["meta"]["totalElements"] > 10000:
-            pageNumber = 1
-            date_time = lastDate
-    iteration += 1
-
-with open("progress.txt", 'w') as file:
+        pageNumber = 1
+        print("Transfer! ", lastDate)
+        dt_obj = datetime.strptime(lastDate, "%Y-%m-%dT%H:%M:%SZ")
+        date_time = dt_obj.strftime("%Y-%m-%d %H:%M:%S")
+        with open(progress, 'w') as file:
             file.write(f"{lastDate}\n")
+    iteration += 1
         
 with open("seen_comments.json", "w") as seen:
     json.dump(list(seen_comments), seen)
+
+
+
+        
     
