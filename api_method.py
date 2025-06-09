@@ -58,10 +58,11 @@ def main():
         page = requests.get(baseURL, params=params)
         # Handle a failure and break
         if (page.status_code != 200): # page limit is code 429
+            print("Something went wrong")
             if (page.status_code == 429):
+                print("Rate limited. Sleeping for 1 hour...")
                 time.sleep(3600)
                 continue
-            print("Something went wrong")
             print("Status code: ", page.status_code)
             save_progress(lastDate, progress,seen_comments)
             break
