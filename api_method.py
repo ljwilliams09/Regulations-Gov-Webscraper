@@ -52,7 +52,7 @@ def main():
         "page[size]" : default_page_size
         }
 
-        # print(f"Fetching data from {params['filter[lastModifiedDate][ge]']}. Current Page Number: {pageNumber}")
+        print(f"Fetching data from {params['filter[lastModifiedDate][ge]']}. Current Page Number: {pageNumber}")
 
         # Getting the page
         page = requests.get(baseURL, params=params)
@@ -61,11 +61,10 @@ def main():
             if (page.status_code == 429):
                 time.sleep(3600)
                 continue
-            else:
-                print("Something went wrong")
-                print("Status code: ", page.status_code)
-                save_progress(lastDate, progress,seen_comments)
-                break
+            print("Something went wrong")
+            print("Status code: ", page.status_code)
+            save_progress(lastDate, progress,seen_comments)
+            break
 
         # Data is in the page in JSON
         data = page.json()
@@ -94,9 +93,10 @@ def main():
         # Handle where there is a next page: we can keep going and there is no problem
         if data["meta"]["hasNextPage"]: 
             pageNumber += 1
-            print("Has next page!")
+            print("Next Page...")
         # If there isn't a next page, there are two scenarios:
         else:
+            print("No next page")
             save_progress(lastDate, progress, seen_comments)
             pageNumber = 1
         iteration += 1
