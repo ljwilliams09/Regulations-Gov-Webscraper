@@ -98,6 +98,7 @@ def main():
         # If there isn't a next page, there are two scenarios:
         else:
             save_progress(lastDate, progress, seen_comments)
+            pageNumber = 1
         iteration += 1
 
 main()
