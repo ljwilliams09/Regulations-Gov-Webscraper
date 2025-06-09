@@ -19,8 +19,8 @@ def get_seen_comments(comment_ids):
         return set(json.load(seen))
     
 def save_progress(lastDate, progress, seen_comments):
-    dt_obj = datetime.strptime(lastDate, "%Y-%m-%dT%H:%M:%SZ")
-    lastDate = dt_obj.strftime("%Y-%m-%d %H:%M:%S")
+    dt_obj = datetime.strptime(lastDate, "%Y-%m-%d %H:%M:%S")
+    lastDate = dt_obj.strftime("%Y-%m-%dT%H:%M:%SZ")
     with open(progress, 'w') as file:
         file.write(f"{lastDate}\n")
 
