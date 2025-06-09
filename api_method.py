@@ -10,11 +10,12 @@ def get_next_time(progress):
     with open(progress, 'r') as file:
         date_time = datetime.strptime(file.readline().strip(), "%Y-%m-%dT%H:%M:%SZ")
         adjust_for_utc = date_time - timedelta(hours=4)
+        # adjust hours parameter to differnce between current timezone and utc
         return adjust_for_utc.strftime("%Y-%m-%d %H:%M:%S") 
 
-def get_seen_comments():
+def get_seen_comments(comment_ids):
     # retrieves a set of comment ids to check against newly processed comments
-    with open("seen_comments.json", "r") as seen:
+    with open(comment_ids, "r") as seen:
         return set(json.load(seen))
     
 def save_progress(lastDate, progress, seen_comments):
@@ -25,7 +26,6 @@ def save_progress(lastDate, progress, seen_comments):
 
     with open("seen_comments.json", "w") as seen:
         json.dump(list(seen_comments), seen)
-    return 1
 
     
 def main():
@@ -35,7 +35,7 @@ def main():
     rawdata = "comment_data.csv"
     progress = "PROGRESS.txt"
     comment_ids = "seen_comments.json"
-    default_page_size = 250
+    default_page_size = 25
     pageNumber = 1
     iteration = 1
     date_time = get_next_time(progress)
@@ -52,26 +52,28 @@ def main():
         "page[size]" : default_page_size
         }
 
-        print(f"Fetching data from {params['filter[lastModifiedDate][ge]']}.  Page Call #: {iteration}")
+        # print(f"Fetching data from {params['filter[lastModifiedDate][ge]']}. Current Page Number: {pageNumber}")
 
         # Getting the page
         page = requests.get(baseURL, params=params)
         # Handle a failure and break
         if (page.status_code != 200): # page limit is code 429
             if (page.status_code == 429):
-                print("Going to sleep at ", datetime.datetime.now().time())
                 time.sleep(3600)
                 continue
             else:
                 print("Something went wrong")
                 print("Status code: ", page.status_code)
+                save_progress(lastDate, progress,seen_comments)
                 break
 
         # Data is in the page in JSON
         data = page.json()
         comments = data["data"]
         if not comments:
+            save_progress(lastDate, progress, seen_comments)
             break
+        
         with open(rawdata, mode="a", newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             for comment in comments:
@@ -87,8 +89,7 @@ def main():
                     observation.append(comment["attributes"]["postedDate"])
                     seen_comments.add(comment["id"])
                     writer.writerow(observation)
-                lastDate = comment["attributes"]["lastModifiedDate"]
-
+            lastDate = max(comment["attributes"]["lastModifiedDate"] for comment in comments)
 
         # Handle where there is a next page: we can keep going and there is no problem
         if data["meta"]["hasNextPage"]: 
@@ -96,10 +97,10 @@ def main():
             print("Has next page!")
         # If there isn't a next page, there are two scenarios:
         else:
-            pageNumber = save_progress(lastDate, progress, seen_comments)
+            save_progress(lastDate, progress, seen_comments)
         iteration += 1
 
-
+main()
 
         
     
