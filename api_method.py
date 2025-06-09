@@ -35,7 +35,7 @@ def main():
     rawdata = "comment_data.csv"
     progress = "PROGRESS.txt"
     comment_ids = "seen_comments.json"
-    default_page_size = 25
+    default_page_size = 250
     pageNumber = 1
     iteration = 1
     date_time = get_next_time(progress)
