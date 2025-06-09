@@ -1,0 +1,13 @@
+#!/bin/bash
+#PBS -N COMMENTS
+#PBS -l walltime=200:00:00
+#PBS -M ljwilliams@colgate.edu
+#PBS -l mem=4gb
+#PBS -q cpu
+
+cd $PBS_O_WORKDIR
+        
+    
+source /local/JupyterHub/bin/activate && conda activate nlp
+
+python api_method.py
