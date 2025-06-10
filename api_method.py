@@ -18,16 +18,14 @@ def to_iso_format(time):
     time = datetime.strptime(time, "%Y-%m-%dT%H:%M:%SZ")
     return (time - timedelta(hours=4)).strftime("%Y-%m-%d %H:%M:%S")
     
-def get_seen_comments(comment_ids):
+def get_seen_comments(comment_ids="seen_comments.json"):
     with open(comment_ids, "r") as seen:
         return set(json.load(seen))
     
-def save_progress(lastDate, progress, seen_comments):
+def save_progress(lastDate, progress="PROGRESS.txt", seen_comments="seen_comments.json"):
     '''
     Saves the progress when there is an issue. Last date should be in "%Y-%m-%dT%H:%M:%SZ" format.
     '''
-    # dt_obj = datetime.strptime(lastDate, "%Y-%m-%dT%H:%M:%SZ")
-    # lastDate = dt_obj.strftime("%Y-%m-%d %H:%M:%S")
     with open(progress, 'w') as file:
         file.write(f"{lastDate}\n")
 
@@ -45,17 +43,16 @@ def main():
     default_page_size = 250
     pageNumber = 1
     iteration = 1
-    param_date = get_next_time(progress) # %Y-%m-%d %H:%M:%S format
-    last_date = param_date
+    last_date = get_next_time(progress)
     seen_comments = get_seen_comments(comment_ids)
-    print("Param_date: ", param_date)
 
     while True:
+        print("Param_date: ", get_next_time(progress))
         # Parameters for page and filters to call
         params = {
         "api_key" : api_key,
         "sort" : "lastModifiedDate,documentId",
-        "filter[lastModifiedDate][ge]" : to_iso_format(param_date),
+        "filter[lastModifiedDate][ge]" : to_iso_format(get_next_time(progress)),
         "page[number]" : pageNumber,
         "page[size]" : default_page_size
         }
@@ -72,14 +69,14 @@ def main():
                 time.sleep(3600)
                 continue
             print("Status code: ", page.status_code)
-            save_progress(param_date, progress,seen_comments)
+            save_progress(get_next_time(progress), progress,seen_comments)
             break
 
         # Data is in the page in JSON
         data = page.json()
         comments = data["data"]
         if not comments:
-            save_progress(param_date, progress, seen_comments)
+            save_progress(get_next_time(progress), progress, seen_comments)
             break
         
         with open(rawdata, mode="a", newline='', encoding='utf-8') as file:
