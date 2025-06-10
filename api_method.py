@@ -5,19 +5,29 @@ import json
 import time
 
 
-def get_next_time(progress):
-    with open(progress, 'r') as file:
-        date_time = datetime.strptime(file.readline().strip(), "%Y-%m-%dT%H:%M:%SZ")
-        adjust_for_utc = date_time - timedelta(hours=4)
-        return adjust_for_utc.strftime("%Y-%m-%d %H:%M:%S") 
 
+def get_next_time(progress="PROGRESS.txt"):
+    '''
+    Takes the time from the file path
+    '''
+    with open(progress, 'r') as file:
+        return file.readline().strip()
+
+def to_iso_format(time):
+    '''turns to iso_format and adjusts for utc time for parameter'''
+    time = datetime.strptime(time, "%Y-%m-%dT%H:%M:%SZ")
+    return (time - timedelta(hours=4)).strftime("%Y-%m-%d %H:%M:S")
+    
 def get_seen_comments(comment_ids):
     with open(comment_ids, "r") as seen:
         return set(json.load(seen))
     
 def save_progress(lastDate, progress, seen_comments):
-    dt_obj = datetime.strptime(lastDate, "%Y-%m-%dT%H:%M:%SZ")
-    lastDate = dt_obj.strftime("%Y-%m-%d %H:%M:%S")
+    '''
+    Saves the progress when there is an issue. Last date should be in "%Y-%m-%dT%H:%M:%SZ" format.
+    '''
+    # dt_obj = datetime.strptime(lastDate, "%Y-%m-%dT%H:%M:%SZ")
+    # lastDate = dt_obj.strftime("%Y-%m-%d %H:%M:%S")
     with open(progress, 'w') as file:
         file.write(f"{lastDate}\n")
 
@@ -35,16 +45,16 @@ def main():
     default_page_size = 250
     pageNumber = 1
     iteration = 1
-    date_time = get_next_time(progress)
+    param_date = get_next_time(progress) # %Y-%m-%d %H:%M:%S format
     seen_comments = get_seen_comments(comment_ids)
-    lastDate = date_time
+    print("Param_date: ", param_date)
 
     while True:
         # Parameters for page and filters to call
         params = {
         "api_key" : api_key,
         "sort" : "lastModifiedDate,documentId",
-        "filter[lastModifiedDate][ge]" : date_time,
+        "filter[lastModifiedDate][ge]" : to_iso_format(param_date),
         "page[number]" : pageNumber,
         "page[size]" : default_page_size
         }
@@ -61,14 +71,14 @@ def main():
                 time.sleep(3600)
                 continue
             print("Status code: ", page.status_code)
-            save_progress(lastDate, progress,seen_comments)
+            save_progress(param_date, progress,seen_comments)
             break
 
         # Data is in the page in JSON
         data = page.json()
         comments = data["data"]
         if not comments:
-            save_progress(lastDate, progress, seen_comments)
+            save_progress(param_date, progress, seen_comments)
             break
         
         with open(rawdata, mode="a", newline='', encoding='utf-8') as file:
@@ -86,7 +96,7 @@ def main():
                     observation.append(comment["attributes"]["postedDate"])
                     seen_comments.add(comment["id"])
                     writer.writerow(observation)
-            lastDate = max(comment["attributes"]["lastModifiedDate"] for comment in comments)
+            param_date = max(comment["attributes"]["lastModifiedDate"] for comment in comments)
 
         # Handle where there is a next page: we can keep going and there is no problem
         if data["meta"]["hasNextPage"]: 
@@ -95,7 +105,7 @@ def main():
         # If there isn't a next page, there are two scenarios:
         else:
             print("No next page")
-            save_progress(lastDate, progress, seen_comments)
+            save_progress(param_date, progress, seen_comments)
             pageNumber = 1
         iteration += 1
 
