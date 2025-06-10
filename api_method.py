@@ -6,15 +6,12 @@ import time
 
 
 def get_next_time(progress):
-    # get the time that the next page call parameter will start with
     with open(progress, 'r') as file:
         date_time = datetime.strptime(file.readline().strip(), "%Y-%m-%dT%H:%M:%SZ")
         adjust_for_utc = date_time - timedelta(hours=4)
-        # adjust hours parameter to differnce between current timezone and utc
         return adjust_for_utc.strftime("%Y-%m-%d %H:%M:%S") 
 
 def get_seen_comments(comment_ids):
-    # retrieves a set of comment ids to check against newly processed comments
     with open(comment_ids, "r") as seen:
         return set(json.load(seen))
     
