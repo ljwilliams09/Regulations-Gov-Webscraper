@@ -16,7 +16,7 @@ def get_next_time(progress="PROGRESS.txt"):
 def to_iso_format(time):
     '''turns to iso_format and adjusts for utc time for parameter'''
     time = datetime.strptime(time, "%Y-%m-%dT%H:%M:%SZ")
-    return (time - timedelta(hours=4)).strftime("%Y-%m-%d %H:%M:S")
+    return (time - timedelta(hours=4)).strftime("%Y-%m-%d %H:%M:%S")
     
 def get_seen_comments(comment_ids):
     with open(comment_ids, "r") as seen:
@@ -46,6 +46,7 @@ def main():
     pageNumber = 1
     iteration = 1
     param_date = get_next_time(progress) # %Y-%m-%d %H:%M:%S format
+    last_date = param_date
     seen_comments = get_seen_comments(comment_ids)
     print("Param_date: ", param_date)
 
@@ -96,7 +97,7 @@ def main():
                     observation.append(comment["attributes"]["postedDate"])
                     seen_comments.add(comment["id"])
                     writer.writerow(observation)
-            param_date = max(comment["attributes"]["lastModifiedDate"] for comment in comments)
+            last_date = max(comment["attributes"]["lastModifiedDate"] for comment in comments)
 
         # Handle where there is a next page: we can keep going and there is no problem
         if data["meta"]["hasNextPage"]: 
@@ -105,7 +106,7 @@ def main():
         # If there isn't a next page, there are two scenarios:
         else:
             print("No next page")
-            save_progress(param_date, progress, seen_comments)
+            save_progress(last_date, progress, seen_comments)
             pageNumber = 1
         iteration += 1
 
