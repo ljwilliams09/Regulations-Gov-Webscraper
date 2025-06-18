@@ -11,4 +11,4 @@ cd $PBS_O_WORKDIR
     
 source /local/JupyterHub/bin/activate && conda activate nlp
 
-python api_method.py
+python api_scraper.py
