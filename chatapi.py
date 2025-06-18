@@ -1,6 +1,13 @@
 import openai
 import csv
 
+def api_call(comment_title):
+    prompt = "Does the following comment title contain an affiliation or organization for the commenter? Respond only with 1 for Yes, or 0 for No."
+
+    response = openai.ChatCompletion.create(
+        
+    )
+
 def main():
     # Variables and Paths
     openai.api_key = input("API Key: ")
@@ -15,6 +22,9 @@ def main():
             comment_title = row[1]
             response = openai.ChatCompletion.create(
                 
+
             )
+
+
 
 
