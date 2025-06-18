@@ -3,6 +3,7 @@ import csv
 from datetime import datetime, timedelta
 import json
 import time
+import os
 
 
 
@@ -36,7 +37,7 @@ def save_progress(lastDate, progress="PROGRESS.txt", seen_comments="seen_comment
 def main():
     # Links, File Paths, and Default Parameters
     baseURL = "https://api.regulations.gov/v4/comments"
-    api_key = "RWhAaanqXHMC89fGk755BO70rN8ygv1txMawAG3a"
+    api_key = os.getenv("")
     rawdata = "comment_data.csv"
     progress = "PROGRESS.txt"
     comment_ids = "seen_comments.json"
