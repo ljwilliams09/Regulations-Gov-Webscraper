@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import json
 import time
 import os
+from dotenv import load_dotenv
 
 
 
@@ -36,8 +37,9 @@ def save_progress(lastDate, progress="PROGRESS.txt", seen_comments="seen_comment
     
 def main():
     # Links, File Paths, and Default Parameters
+    load_dotenv()
     baseURL = "https://api.regulations.gov/v4/comments"
-    api_key = os.getenv("")
+    api_key = os.getenv("REG_GOV_API_KEY")
     rawdata = "comment_data.csv"
     progress = "PROGRESS.txt"
     comment_ids = "seen_comments.json"
