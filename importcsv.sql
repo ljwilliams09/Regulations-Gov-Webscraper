@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS comments (
+CREATE TABLE comments (
     id TEXT,
     documentType TEXT,
     lastModifiedDate TEXT,
@@ -7,9 +7,9 @@ CREATE TABLE IF NOT EXISTS comments (
     title TEXT,
     objectId TEXT,
     postedDate TEXT
-);
+)
 
-COPY comments
-FROM "/Users/lucawilliams/Desktop/comment_data.csv"
+COPY COMMENTS
+FROM '/Users/lucawilliams/Desktop/comment_data.csv'
 DELIMITER ','
-CSV HEADER;
+CSV HEADER
