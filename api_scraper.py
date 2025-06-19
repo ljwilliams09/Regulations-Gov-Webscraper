@@ -16,17 +16,23 @@ def get_next_time(progress="PROGRESS.txt"):
         return file.readline().strip()
 
 def to_iso_format(time):
-    '''turns to iso_format and adjusts for utc time for parameter'''
+    '''turns to iso_format and adjusts for utc time for parameter
+        Input: YYYY-mm-ddTHH:MM:SSZ
+        Output: YYYY-mm-dd HH:MM:SS
+    '''
     time = datetime.strptime(time, "%Y-%m-%dT%H:%M:%SZ")
     return (time - timedelta(hours=4)).strftime("%Y-%m-%d %H:%M:%S")
     
 def get_seen_comments(comment_ids="seen_comments.json"):
+    '''
+        Loads the comment_ids as a set from the json file
+    '''
     with open(comment_ids, "r") as seen:
         return set(json.load(seen))
     
 def save_progress(lastDate, progress="PROGRESS.txt", seen_comments="seen_comments.json"):
     '''
-    Saves the progress when there is an issue. Last date should be in "%Y-%m-%dT%H:%M:%SZ" format.
+    Saves the progress when there is an issue. Last date should be in format with T and Z.
     '''
     with open(progress, 'w') as file:
         file.write(f"{lastDate}\n")
