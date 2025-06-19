@@ -1,1 +1,6 @@
 .env
+500_sample.csv
+samplecoding.csv
+comment_data.csv
+chatGPT_500_coding.csv
+excluding_comments_on.csv
