@@ -23,7 +23,7 @@ def api_call(comment_title):
 
 def main():
     # Variables and Paths
-    titles = "excluding_comments_on.csv"
+    titles = "500_sample.csv"
     results = "samplecoding.csv"
 
     with open(titles, 'r',encoding='utf-8') as f:
