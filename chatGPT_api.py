@@ -23,7 +23,7 @@ def api_call(comment_title, comID):
 
 def main():
     # Variables and Paths
-    titles = "500_sample.csv"
+    titles = "sample_500.csv"
     results = "chatGPT_500_coding.csv"
 
     with open(titles, 'r',encoding='utf-8') as f:
