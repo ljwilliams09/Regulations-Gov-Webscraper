@@ -5,6 +5,26 @@ from openai import OpenAI
 import requests
 load_dotenv()
 
+def linker(comment_id):
+    url = "https://api.regulations.gov/v4/comments/" + comment_id
+    params = {
+        "api_key" : "RWhAaanqXHMC89fGk755BO70rN8ygv1txMawAG3a"
+    }
+
+    comment_page = requests.get(url, params=params) # get the comment
+    if comment_page.status_code != 200:
+        raise Exception(f"Failed to access the comment page for the comment {comment_id}, with staus code {comment_page.status_code}")
+    
+    link = (comment_page.json())["relationships"]["attachments"]["links"]["related"]
+
+    link_page = requests.get(link, params=params)
+    if link_page.status_code != 200:
+            raise Exception(f"Failed to access the link page for the comment {comment_id}, with status code {link_page.status_code}")
+    
+    attachment = (link_page.json())["data"]["fileFormats"]["file_url"]
+
+    return attachment
+
 def client(filename):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     file = client.files.create(
@@ -29,18 +49,19 @@ def client(filename):
             }
         ]
     )
-
     return response.output_text
 
-def scan(attachment_link):
-    response = requests.get(attachment_link)
+def scan(comment_id):
+    attachment = linker(comment_id)
+
+    response = requests.get(attachment)
     if response.status_code != 200:
-        raise Exception(f"Failed to download the attachment for the link {attachment_link}")
-    
+        raise Exception(f"Failed to fetch attachment for comment {comment_id}")
+
     file = "temp_attachment.pdf"
 
     with open(file, "wb") as f:
-        f.write(response.content)
+        f.write(____.content)
     
     result = client(file)
     try:
@@ -49,5 +70,3 @@ def scan(attachment_link):
         print("File could not be located and deleted")
     print(result)
     return result
-
-attachments("https://downloads.regulations.gov/EPA-R10-OW-2017-0369-1273/attachment_1.pdf")
