@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 import csv
-from networkx import NodeNotFound
 from openai import OpenAI
 import requests
 load_dotenv()
@@ -33,7 +32,7 @@ def client(filename):
 
     return response.output_text
 
-def attachments(attachment_link):
+def scan(attachment_link):
     response = requests.get(attachment_link)
     if response.status_code != 200:
         raise Exception(f"Failed to download the attachment for the link {attachment_link}")
@@ -48,5 +47,7 @@ def attachments(attachment_link):
         os.remove(file)
     except FileNotFoundError:    
         print("File could not be located and deleted")
+    print(result)
     return result
-    
+
+attachments("https://downloads.regulations.gov/EPA-R10-OW-2017-0369-1273/attachment_1.pdf")
