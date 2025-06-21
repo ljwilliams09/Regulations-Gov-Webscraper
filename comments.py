@@ -6,7 +6,7 @@ import requests
 def client(comment):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     prompt = f"""
-        Does this following comment indicate the affiliation of the commenter? Only provide the affiliation if Yes, and -1 if not.
+        Does this following comment indicate the affiliation of the commenter? Only provide the affiliation if Yes, and N/A if not.
         {comment}
     """
     response = client.chat.completions.create(

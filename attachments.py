@@ -1,9 +1,6 @@
-import os
-from dotenv import load_dotenv
-import csv
 from openai import OpenAI
+import os
 import requests
-load_dotenv()
 
 def linker(comment_id):
     url = "https://api.regulations.gov/v4/comments/" + comment_id
@@ -15,15 +12,18 @@ def linker(comment_id):
     if comment_page.status_code != 200:
         raise Exception(f"Failed to access the comment page for the comment {comment_id}, with staus code {comment_page.status_code}")
     
-    link = (comment_page.json())["relationships"]["attachments"]["links"]["related"]
+    link = (comment_page.json())["data"]["relationships"]["attachments"]["links"]["related"]
 
     link_page = requests.get(link, params=params)
     if link_page.status_code != 200:
             raise Exception(f"Failed to access the link page for the comment {comment_id}, with status code {link_page.status_code}")
-    
-    attachment = (link_page.json())["data"]["fileFormats"]["file_url"]
 
-    return attachment
+    data = link_page.json()
+    if not data["data"]:
+        return  "N/A" 
+    
+    return (link_page.json())["data"][0]["attributes"]["fileFormats"][0]["fileUrl"]
+
 
 def client(filename):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -43,7 +43,7 @@ def client(filename):
                     },
                     {
                         "type" : "input_text",
-                        "text" : "What is the affiliation, if any, of the author(s) of this document? Only respond with the affiliation, and -1 if there seems to be no affiliation."
+                        "text" : "What is the affiliation, if any, of the author(s) of this document? Only respond with the affiliation, or N/A if there seems to be no affiliation."
                     }
                 ]
             }
@@ -53,6 +53,8 @@ def client(filename):
 
 def scan(comment_id):
     attachment = linker(comment_id)
+    if attachment == -1:
+        return -1
 
     response = requests.get(attachment)
     if response.status_code != 200:
@@ -61,7 +63,7 @@ def scan(comment_id):
     file = "temp_attachment.pdf"
 
     with open(file, "wb") as f:
-        f.write(____.content)
+        f.write(response.content)
     
     result = client(file)
     try:
