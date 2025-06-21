@@ -24,7 +24,7 @@ def scan(comment_id):
     params = {
         "api_key" : regulations_api
     }
-    
+
     url = "https://api.regulations.gov/v4/comments/" + comment_id
     response = requests.get(url, params=params)
 
