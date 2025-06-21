@@ -84,7 +84,7 @@ def main():
         # Data is in the page in JSON
         data = page.json()
         comments = data["data"]
-        if not comments:
+        if pageNumber == 40 and last_date == max(comment["attributes"]["lastModifiedDate"] for comment in comments):
             save_progress(get_next_time(progress), progress, seen_comments)
             break
         
