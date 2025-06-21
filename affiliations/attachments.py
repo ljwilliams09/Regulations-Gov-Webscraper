@@ -53,8 +53,8 @@ def client(filename):
 
 def scan(comment_id):
     attachment = linker(comment_id)
-    if attachment == -1:
-        return -1
+    if attachment == "N/A":
+        return "N/A"
 
     response = requests.get(attachment)
     if response.status_code != 200:
@@ -70,5 +70,5 @@ def scan(comment_id):
         os.remove(file)
     except FileNotFoundError:    
         print("File could not be located and deleted")
-    print(result)
+  
     return result

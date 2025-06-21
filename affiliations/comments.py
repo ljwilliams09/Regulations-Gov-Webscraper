@@ -21,12 +21,13 @@ def client(comment):
 
 def scan(comment_id):
     regulations_api = os.getenv("REG_GOV_API_KEY")
-    base_url = "https://api.regulations.gov/v4/comments/"
     params = {
         "api_key" : regulations_api
     }
-    url = base_url + comment_id
+    
+    url = "https://api.regulations.gov/v4/comments/" + comment_id
     response = requests.get(url, params=params)
+
     if response.status_code != 200:
         raise Exception ("Failed to access the comments page")
     
