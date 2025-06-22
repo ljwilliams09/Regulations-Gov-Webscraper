@@ -43,7 +43,7 @@ def client(filename):
                     },
                     {
                         "type" : "input_text",
-                        "text" : "What is the affiliation, if any, of the author(s) of this document? Only respond with the affiliation, or N/A if there seems to be no affiliation."
+                        "text" : "What is the affiliation, if any, of the author(s) of this document? Only respond with the affiliation, N/A if there seems to be no affiliation, or INELIGIBLE if the document is not eligible."
                     }
                 ]
             }

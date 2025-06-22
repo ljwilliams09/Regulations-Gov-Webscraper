@@ -36,3 +36,4 @@ def scan(comment_id):
         return organization
 
     return client((response.json())["data"]["attributes"]["comment"])
+
