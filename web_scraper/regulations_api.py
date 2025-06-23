@@ -45,7 +45,7 @@ def main():
     # Links, File Paths, and Default Parameters
     load_dotenv()
     baseURL = "https://api.regulations.gov/v4/comments"
-    api_key = os.getenv("REG_GOV_API_KEY")
+    api_key = os.getenv("REG_GOV_API_KEY_LW")
     rawdata = "comment_data.csv"
     progress = "PROGRESS.txt"
     comment_ids = "seen_comments.json"

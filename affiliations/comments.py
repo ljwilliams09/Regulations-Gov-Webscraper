@@ -20,7 +20,7 @@ def client(comment):
     return response.choices[0].message.content.strip()
 
 def scan(comment_id):
-    regulations_api = os.getenv("REG_GOV_API_KEY")
+    regulations_api = os.getenv("REG_GOV_API_KEY_AB")
     params = {
         "api_key" : regulations_api
     }
