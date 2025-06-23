@@ -2,7 +2,7 @@
   SELECT
     EXTRACT(YEAR FROM CAST(posteddate AS date)) AS year,
     COUNT(*) AS row_count
-  FROM public.comments
+  FROM public.comments_v2
   WHERE EXTRACT(YEAR FROM CAST(posteddate AS date)) BETWEEN 1800 AND 2024
   GROUP BY year
   ORDER BY year DESC
