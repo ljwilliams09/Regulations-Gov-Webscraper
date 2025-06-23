@@ -12,6 +12,7 @@ def fetch():
     year = 2024
     url = "https://api.regulations.gov/v4/comments"
     output = "comments.csv"
+    last_date = ""
 
     # each iteration is a look at a new year
     while True:
@@ -28,6 +29,14 @@ def fetch():
                 "page[size]" : 250
             }
             response = requests.get(url, params=params)
+            if response.status_code != 200:
+                if response.status_code == 429:
+                    print("Limit Reached, going to sleep for a while")
+                    time.sleep(3600)
+                    continue
+                else:
+                    print("Error connecting to API")
+                    break
             comments = (response.json())["data"]
             with open(output, 'a') as f:
                 writer = csv.writer(f)
