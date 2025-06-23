@@ -84,10 +84,7 @@ def main():
         # Data is in the page in JSON
         data = page.json()
         comments = data["data"]
-        if pageNumber == 40 and last_date == max(comment["attributes"]["lastModifiedDate"] for comment in comments):
-            save_progress(get_next_time(progress), progress, seen_comments)
-            break
-        
+
         with open(rawdata, mode="a", newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             for comment in comments:
@@ -110,6 +107,9 @@ def main():
             pageNumber += 1
             print("Next Page...")
         # If there isn't a next page, there are two scenarios:
+        elif pageNumber == 40 and comment["meta"]["totalElements"] < 10000:
+            save_progress(get_next_time(progress), progress, seen_comments)
+            break
         else:
             print("No next page")
             save_progress(last_date, progress, seen_comments)
