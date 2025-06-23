@@ -16,14 +16,16 @@ def fetch():
     # each iteration is a look at a new year
     while True:
         print("Year: {year}")
-
+        page = 1
         while True:
             ge, le = year_range(year)
             params = {
                 "api_key" : os.getenv("REG_GOV_API_KEY_LW"),
                 "filter[postedDate][ge]" : ge,
                 "filter[postedDate][le]" : le,
-                "sort" : "lastModifiedDate"
+                "sort" : "lastModifiedDate",
+                "page[number]" : page,
+                "page[size]" : 250
             }
             response = requests.get(url, params=params)
             comments = (response.json())["data"]
@@ -31,5 +33,12 @@ def fetch():
                 writer = csv.writer(f)
                 for comment in comments:
                     writer.writerow([comment["id"],comment["attributes"]["title"],comment["attributes"]["postedDate"],comment["attributes"]["lastModifiedDate"]])
-                
+            
+            # Handle next page
+            if (response.json())["meta"]["hasNextPage"]:
+                page += 1
+            elif page == 40 and (response.json()) < 10000:
+                break
+            else: 
+                page
         year -= 1
