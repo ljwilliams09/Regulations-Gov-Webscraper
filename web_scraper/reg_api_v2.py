@@ -10,12 +10,14 @@ def year_range(year):
 
 def date_format(last_date):
     date = datetime.strptime(last_date, "%Y-%m-%dT%H:%M:%SZ")
-    return date 
+    return (date - timedelta(hours=4)).strftime("%Y-%m-%d %H:%M:%S")
+
+
 def fetch():
     year = 2024
     url = "https://api.regulations.gov/v4/comments"
     output = "comments.csv"
-    last_date = ""
+    start_date = "0000-00-00T00:00:00"
 
     print("Year: {year}")
     page = 1
@@ -26,6 +28,7 @@ def fetch():
             "filter[postedDate][ge]" : ge,
             "filter[postedDate][le]" : le,
             "sort" : "lastModifiedDate",
+            "filter[lastModifiedDate][ge]" : start_date, 
             "page[number]" : page,
             "page[size]" : 250            
         }
@@ -39,8 +42,11 @@ def fetch():
             else:
                 print("Error connecting to API")
                 break
+
         comments = (response.json())["data"]
-        last_date = max(comment["attributes"]["lastModifiedDate"] for comment in comments)
+        start_date = date_format(max(comment["attributes"]["lastModifiedDate"] for comment in comments))
+
+
         with open(output, 'a') as f:
             writer = csv.writer(f)
             for comment in comments:
@@ -52,5 +58,5 @@ def fetch():
         elif page == 40 and (response.json()) < 10000:
             break
         else: 
-            page
+            start_date = date_format(max(comment["attributes"]["lastModifiedDate"] for comment in comments))
         year -= 1
