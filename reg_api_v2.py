@@ -14,14 +14,15 @@ def date_format(last_date):
 
 
 def fetch():
-    year = 2024
+    year = 1991
     url = "https://api.regulations.gov/v4/comments"
     output = "comments.csv"
-    start_date = "0000-00-00T00:00:00"
+    start_date = "0001-01-01T00:00:00"
 
     print("Year: {year}")
     page = 1
     while True:
+        print(f"Page: {page}")
         ge, le = year_range(year)
         params = {
             "api_key" : os.getenv("REG_GOV_API_KEY_LW"),
@@ -44,8 +45,6 @@ def fetch():
                 break
 
         comments = (response.json())["data"]
-        start_date = date_format(max(comment["attributes"]["lastModifiedDate"] for comment in comments))
-
 
         with open(output, 'a') as f:
             writer = csv.writer(f)
@@ -55,8 +54,10 @@ def fetch():
         # Handle next page
         if (response.json())["meta"]["hasNextPage"]:
             page += 1
-        elif page == 40 and (response.json()) < 10000:
+        elif page == 40 and (response.json())["meta"]["totalElements"] < 10000:
             break
         else: 
             start_date = date_format(max(comment["attributes"]["lastModifiedDate"] for comment in comments))
-        year -= 1
+            page = 1
+
+fetch()
