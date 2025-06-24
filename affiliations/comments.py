@@ -5,9 +5,9 @@ import requests
 import html
 import time
 
-def client(comment, title, organization=""):
+def client(comment, title, summary, potent, organization=""):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-    prompt = f"Does this following comment, title, and organization indicate the affiliation of the commenter? Only provide the affiliation if Yes, and N/A if not. Title: {title} Organization: {organization} Comment: {comment}"
+    prompt = f"Does this following comment, title, attachment summary, potential affiliation, and organization indicate the affiliation of the commenter? Only provide the affiliation if yes, and N/A if not. Title: {title}. Organization: {organization}. Comment: {comment}. Summary:{summary}. Potential Affiliation: {potent}"
 
     response = client.chat.completions.create(
         model="o4-mini",
@@ -18,7 +18,7 @@ def client(comment, title, organization=""):
     )
     return response.choices[0].message.content.strip()
 
-def scan(comment_id):
+def scan(comment_id, summary, potent):
     regulations_api = os.getenv("REG_GOV_API_KEY_AB")
     params = {
         "api_key" : regulations_api
@@ -40,8 +40,7 @@ def scan(comment_id):
     comment = html.unescape(data["comment"])
     title = data["title"]
     if organization is not None:
-        return comment, client(comment, title, organization)
+        return comment, client(comment, title, summary, potent, organization)
 
-    return comment, client(comment, title)
+    return comment, client(comment, title, summary, potent)
 
-print(scan("NOAA-NMFS-2008-0209-12467"))

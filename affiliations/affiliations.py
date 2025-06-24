@@ -1,7 +1,6 @@
 import csv
 import attachments as a
 import comments as c
-import titles as t
 
 
 
@@ -17,21 +16,10 @@ def main():
             writer.writerow(["id", "title", "affiliation", "comment"])
         
             for row in reader:
-                comment = ""
-                affiliation = ""
-                attachment = ""
-                found = False
+                comment_id = row[0]
+                summary, potent_affil = a.scan(comment_id)
+                comment, affiliation = c.scan(comment_id, summary, potent_affil)
 
-                comment, affiliation = c.scan(row[0], found)
-                if affiliation != "N/A":
-                    found = True
-
-                attachment = a.scan(row[0], found)
-                if attachment != "N/A":
-                    writer.writerow([row[0], row[1], attachment])
-                    print(f"Affilation of {row[1]} found in attachment!")
-        
-                print(f"Affilation of {row[1]} not found!")
-                writer.writerow([row[0], row[1], "n/a"])
+                writer.writerow([row[0], row[1], attachment])
                 
 main()
