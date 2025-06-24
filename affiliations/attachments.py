@@ -9,20 +9,17 @@ def linker(comment_id):
         "api_key" : os.getenv("REG_GOV_API_KEY_LW")
     }
     while True:
-        comment_page = requests.get(url, params=params) # get the comment
-        if comment_page.status_code != 200:
-            if comment_page.status_code == 429:
+        link_page = requests.get(url, params=params)
+        if link_page.status_code != 200:
+            if link_page.status_code == 429:
                 time.sleep(3600)
                 continue
-            raise Exception(f"Failed to access the comment page for the comment {comment_id}, with staus code {comment_page.status_code}")
-    
-        link = (comment_page.json())["data"]["relationships"]["attachments"]["links"]["related"]
-        link_page = requests.get(link, params=params)
-        if link_page.status_code != 200:
-                raise Exception(f"Failed to access the link page for the comment {comment_id}, with status code {link_page.status_code}")
+            raise Exception(f"Failed to access the link page for the comment {comment_id}, with status code {link_page.status_code}")
+        else:
+            break
     data = link_page.json()
     if not data["data"]:
-        return  "N/A" 
+        return  "N/A","N/A" 
     
     return (link_page.json())["data"][0]["attributes"]["fileFormats"][0]["fileUrl"]
 
