@@ -71,7 +71,6 @@ def fetch():
             elif (not (response.json())["meta"]["hasNextPage"]) and (response.json())["meta"]["totalElements"] < 10000:
                 break
             else: 
-
                 print("RESET PARAMETERS")
                 start_date = date_format_param(max(comment["attributes"]["lastModifiedDate"] for comment in (response.json())["data"]))
                 params["filter[lastModifiedDate][ge]"] = start_date
@@ -80,4 +79,4 @@ def fetch():
 
 
 
-fetch()
+print(date_format_param("2016-02-27T00:11:19Z"))
