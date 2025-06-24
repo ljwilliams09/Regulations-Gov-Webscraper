@@ -31,8 +31,11 @@ def client(filename):
         file=open(filename, "rb"),
         purpose="user_data"
     )
+    found_text = "If the document is eligible, return a summary of the document. If not, say the summary is INELIGBLE."
+    not_found_text = "If the document is eligible, return a summary of the document. If not, say the summary is INELIGBLE. Additionally, what is the affiliation, if any, of the author(s) of this document. Either give the affiliation, N/A if there seems to be no affiliation, or INELIGIBLE if you can't tell. Give the result in this format: summary,affiliation"
+
     response = client.responses.create(
-        model='gpt-4.1',
+        model='o4-min',
         input=[
             {
                 "role" : "user",
@@ -43,7 +46,7 @@ def client(filename):
                     },
                     {
                         "type" : "input_text",
-                        "text" : "What is the affiliation, if any, of the author(s) of this document? Only respond with the affiliation, N/A if there seems to be no affiliation, or INELIGIBLE if the document is not eligible."
+                        "text" : ""
                     }
                 ]
             }
@@ -51,7 +54,7 @@ def client(filename):
     )
     return response.output_text
 
-def scan(comment_id):
+def scan(comment_id, found):
     attachment = linker(comment_id)
     if attachment == "N/A":
         return "N/A"

@@ -2,20 +2,19 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 import requests
+import html
+import time
 
-def client(comment):
+def client(comment, title, organization=""):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-    prompt = f"""
-        Does this following comment indicate the affiliation of the commenter? Only provide the affiliation if Yes, and N/A if not.
-        {comment}
-    """
+    prompt = f"Does this following comment, title, and organization indicate the affiliation of the commenter? Only provide the affiliation if Yes, and N/A if not. Title: {title} Organization: {organization} Comment: {comment}"
+
     response = client.chat.completions.create(
-        model="gpt-4.1",
+        model="o4-mini",
         messages = [{
             "role" : "user",
             "content" : prompt
-        }],
-        temperature=0
+        }]
     )
     return response.choices[0].message.content.strip()
 
@@ -24,16 +23,25 @@ def scan(comment_id):
     params = {
         "api_key" : regulations_api
     }
+    while True:
+        url = "https://api.regulations.gov/v4/comments/" + comment_id
+        response = requests.get(url, params=params)
 
-    url = "https://api.regulations.gov/v4/comments/" + comment_id
-    response = requests.get(url, params=params)
-
-    if response.status_code != 200:
-        raise Exception ("Failed to access the comments page")
-    
-    organization = (response.json())["data"]["attributes"]["organization"]
+        if response.status_code != 200:
+            if response.status_code == 429:
+                time.sleep(3600)
+            else:
+                raise Exception ("Failed to access the comments page")
+        else:
+            break
+    data = response.json()["data"]["attributes"]
+        
+    organization = data["organization"]
+    comment = html.unescape(data["comment"])
+    title = data["title"]
     if organization is not None:
-        return organization
+        return comment, client(comment, title, organization)
 
-    return client((response.json())["data"]["attributes"]["comment"])
+    return comment, client(comment, title)
 
+print(scan("NOAA-NMFS-2008-0209-12467"))
