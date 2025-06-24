@@ -37,7 +37,8 @@ def scan(comment_id, summary, potent):
     data = response.json()["data"]["attributes"]
         
     organization = data["organization"]
-    comment = html.unescape(data["comment"])
+    if data['comment'] is not None:
+        comment = html.unescape(data["comment"])
     title = data["title"]
     if organization is not None:
         return comment, client(comment, title, summary, potent, organization)
