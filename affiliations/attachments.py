@@ -25,14 +25,19 @@ def linker(comment_id):
     return (link_page.json())["data"][0]["attributes"]["fileFormats"][0]["fileUrl"]
 
 
-def client(filename):
+def client(filename, found):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     file = client.files.create(
         file=open(filename, "rb"),
         purpose="user_data"
     )
     found_text = "If the document is eligible, return a summary of the document. If not, say the summary is INELIGBLE."
-    not_found_text = "If the document is eligible, return a summary of the document. If not, say the summary is INELIGBLE. Additionally, what is the affiliation, if any, of the author(s) of this document. Either give the affiliation, N/A if there seems to be no affiliation, or INELIGIBLE if you can't tell. Give the result in this format: summary,affiliation"
+
+    not_found_text = "If the document is eligible, return a summary of the document. If not, say the summary is INELIGBLE. Additionally, what is the affiliation, if any, of the author(s) of this document. Either give the affiliation, N/A if there seems to be no affiliation, or INELIGIBLE if it is ineligible. Give the result in this format: summary,affiliation"
+    if found:
+        temp = found_text
+    else:
+        temp = not_found_text
 
     response = client.responses.create(
         model='o4-min',
@@ -46,7 +51,7 @@ def client(filename):
                     },
                     {
                         "type" : "input_text",
-                        "text" : ""
+                        "text" : temp
                     }
                 ]
             }
@@ -68,7 +73,7 @@ def scan(comment_id, found):
     with open(file, "wb") as f:
         f.write(response.content)
     
-    result = client(file)
+    result = client(file, found)
     try:
         os.remove(file)
     except FileNotFoundError:    
