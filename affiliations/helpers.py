@@ -19,7 +19,6 @@ def linker(comment_id):
     """
     attachment_number = 0
     retries = 3
-    wait = 1
     while True:
         attachment_number += 1
         url = f"https://downloads.regulations.gov/{comment_id}/attachment_{attachment_number}.pdf"
@@ -29,7 +28,7 @@ def linker(comment_id):
             if response.status_code == 200:
                 break
             elif attempt < retries - 1:
-                time.sleep(wait * (2 ** attempt)) # exponential backoff
+                time.sleep(2 ** attempt) # exponential backoff
             else:
                 return attachment_number - 1
             

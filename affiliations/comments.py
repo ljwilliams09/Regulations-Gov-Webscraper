@@ -53,7 +53,7 @@ def scan(comment_id):
             retries += 1
             if retries >= max_retries:
                 raise Exception("Failed to access the comments page after 3 retries")
-            time.sleep(1 * (2 ** retries))  # exponential backoff
+            time.sleep(2 ** retries)  # exponential backoff
 
     try:
         data = response.json()["data"]["attributes"]
