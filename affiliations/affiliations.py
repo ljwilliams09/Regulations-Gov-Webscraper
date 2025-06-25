@@ -59,9 +59,14 @@ def scan():
             comment_id = row[0]
             summary, affiliation = a.scan(comment_id)
             title, comment, organization, gov_agency = c.scan(comment_id)
+            print(f"Title: {title}")
+            print(f"Comment: {comment}")
+            print(f"Organization: {organization}")
+            print(f"Gov_Agency: {gov_agency}")
+            print(f"Summary: {summary}")
+            print(f"Affiliation: {affiliation}")
             final_affiliation = result(title, comment, organization, gov_agency, summary, affiliation)
             writer.writerow([comment_id, title, final_affiliation, comment, summary])
 
-                
-scan("")
+scan()
 

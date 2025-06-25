@@ -89,7 +89,6 @@ def get_attachment(comment_id, attachment):
         elif response.status_code == 429:
             time.sleep(3600)
         else:
-            print("else")
             retries += 1
             if retries >= max_retries:
                 raise Exception("Failed to access the comments page after 3 retries")
@@ -119,5 +118,4 @@ def scan(comment_id):
         return results[0], results[1]
         
     return None, None
-print(scan("EPA-R10-OW-2017-0369-1246"))
 
