@@ -9,4 +9,3 @@ if not logger.hasHandlers():
     formatter = logging.Formatter('%(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-
