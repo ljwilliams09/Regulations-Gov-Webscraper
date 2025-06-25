@@ -16,7 +16,10 @@ def main():
         
         for row in reader:
             comment_id = row[0]
-            title, comment, organization, 
+            title, comment, organization, gov_agency = c.scan(comment_id)
+
+
+
             comment, affiliation = c.scan(comment_id, summary, potent_affil)
             summary, potent_affil = a.scan(comment_id)
             comment, affiliation = c.scan(comment_id, summary, potent_affil)

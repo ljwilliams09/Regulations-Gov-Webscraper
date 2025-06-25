@@ -48,4 +48,16 @@ def write_header(filename):
     with open(filename, 'a') as r:
             writer = csv.writer(r)
             writer.writerow(["id", "title", "affiliation", "comment", "attachment_summary"])
+
+def clean(comment):
+    """
+    Replaces carriage return ('\r') and newline ('\n') characters in the input string with spaces.
+
+    Args:
+        comment (str): The input string to be cleaned.
+
+    Returns:
+        str: The cleaned string with all '\r' and '\n' characters replaced by spaces.
+    """
+    return comment.replace('\r', ' ').replace('\n', ' ')
     
