@@ -33,7 +33,7 @@ def linker(comment_id):
                 return attachment_number - 1
 
 
-def clean(comment):
+def clean(text):
     """
     Replaces carriage return ('\r') and newline ('\n') characters in the input string with spaces.
 
@@ -43,5 +43,5 @@ def clean(comment):
     Returns:
         str: The cleaned string with all '\r' and '\n' characters replaced by spaces.
     """
-    return comment.replace('\r', ' ').replace('\n', ' ')
+    return text.replace('\r', ' ').replace('\n', ' ')
     
