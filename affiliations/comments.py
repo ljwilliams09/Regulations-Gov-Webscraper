@@ -37,6 +37,7 @@ def scan(comment_id):
         if response.status_code == 200:
             break
         elif response.status_code == 429:
+            logger.debug("Going to sleep")
             time.sleep(3600)
         else:
             retries += 1
