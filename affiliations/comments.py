@@ -4,19 +4,6 @@ from openai import OpenAI
 import requests
 import time
 
-# def client(comment, title, summary, potent, organization=""):
-#     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-#     prompt = f"Does this following comment, title, attachment summary, potential affiliation, and organization indicate the affiliation of the commenter? Only provide the affiliation if yes, and N/A if not. Title: {title}. Organization: {organization}. Comment: {comment}. Summary:{summary}. Potential Affiliation: {potent}"
-
-#     response = client.chat.completions.create(
-#         model="o4-mini",
-#         messages = [{
-#             "role" : "user",
-#             "content" : prompt
-#         }]
-#     )
-#     return response.choices[0].message.content.strip()
-
 def scan(comment_id):
     """
     Fetches and returns details of a comment from the Regulations.gov API given a comment ID.
