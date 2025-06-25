@@ -17,13 +17,9 @@ def main():
         for row in reader:
             comment_id = row[0]
             title, comment, organization, gov_agency = c.scan(comment_id)
+            attachments = helpers.linker(comment_id)
+            summary, affiliation = a.scan(comment_id, attachments)
 
-
-
-            comment, affiliation = c.scan(comment_id, summary, potent_affil)
-            summary, potent_affil = a.scan(comment_id)
-            comment, affiliation = c.scan(comment_id, summary, potent_affil)
-            writer.writerow([row[0], row[1], affiliation, comment, summary])
                 
 main()
 
