@@ -22,7 +22,7 @@ def result(title, comment, organization, gov_agency, summary, affiliation):
         str or None: The determined affiliation of the commenter, or None if no affiliation is found.
     """
     load_dotenv()
-    client = openai.OpenAI(os.getenv("OPENAI_API_KEY"))
+    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     prompt = (
         "Here are a variety of variables for a comment on a regulation from regulation.gov, examine them and determine an affiliation for the commenter. Return only the affiliation, or None if there is not one.\n"
         "Variables:\n"
@@ -34,7 +34,7 @@ def result(title, comment, organization, gov_agency, summary, affiliation):
         f"- Affiliation (potential affiliation pulled from the attached file): {affiliation}" 
     )
 
-    response = client.chat.completions(
+    response = client.chat.completions.create(
         model="o4-mini",
         messages=[
             {"role" : "system", "content" : "You are a data analyst who only returns data in the exact format as specified."},
@@ -46,27 +46,27 @@ def result(title, comment, organization, gov_agency, summary, affiliation):
 
 
 def scan():
-    comments = "comments.csv"  # column 0: id
-    results = "affiliations.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
+    comments = "affiliations/comments.csv"  # column 0: id
+    results = "affiliations/affiliations.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
 
     with open(comments, 'r') as f:
         reader = csv.reader(f)
         next(f)
-    with open(results, 'a') as f:
-        writer = csv.writer(f)
-        writer.writerow(["id", "title", "affiliation", "comment", "attachment_summary"])
-        for row in reader:
-            comment_id = row[0]
-            summary, affiliation = a.scan(comment_id)
-            title, comment, organization, gov_agency = c.scan(comment_id)
-            print(f"Title: {title}")
-            print(f"Comment: {comment}")
-            print(f"Organization: {organization}")
-            print(f"Gov_Agency: {gov_agency}")
-            print(f"Summary: {summary}")
-            print(f"Affiliation: {affiliation}")
-            final_affiliation = result(title, comment, organization, gov_agency, summary, affiliation)
-            writer.writerow([comment_id, title, final_affiliation, comment, summary])
+        with open(results, 'a') as r:
+            writer = csv.writer(r)
+            writer.writerow(["id", "title", "affiliation", "comment", "attachment_summary"])
+            for row in reader:
+                comment_id = row[0]
+                summary, affiliation = a.scan(comment_id)
+                title, comment, organization, gov_agency = c.scan(comment_id)
+                print(f"Title: {title}")
+                print(f"Comment: {comment}")
+                print(f"Organization: {organization}")
+                print(f"Gov_Agency: {gov_agency}")
+                print(f"Summary: {summary}")
+                print(f"Affiliation: {affiliation}")
+                final_affiliation = result(title, comment, organization, gov_agency, summary, affiliation)
+                writer.writerow([comment_id, title, final_affiliation, comment, summary])
 
 scan()
 
