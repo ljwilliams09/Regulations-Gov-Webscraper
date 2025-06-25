@@ -1,8 +1,6 @@
-
 import csv
 import requests
 import time
-
 
 def linker(comment_id):
     """

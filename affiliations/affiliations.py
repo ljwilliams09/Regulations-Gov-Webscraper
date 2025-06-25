@@ -1,6 +1,7 @@
 import csv
 import attachments as a
 import comments as c
+import helpers
 
 
 
@@ -11,14 +12,12 @@ def main():
     with open(comments, 'r') as f:
         reader = csv.reader(f)
         next(f)
-        with open(results, 'a') as r:
-            writer = csv.writer(r)
-            writer.writerow(["id", "title", "affiliation", "comment", "attachment_summary"])
+        helpers.write_header(results)
         
-            for row in reader:
-                comment_id = row[0]
-                summary, potent_affil = a.scan(comment_id)
-                comment, affiliation = c.scan(comment_id, summary, potent_affil)
-                writer.writerow([row[0], row[1], affiliation, comment, summary])
+        for row in reader:
+            comment_id = row[0]
+            summary, potent_affil = a.scan(comment_id)
+            comment, affiliation = c.scan(comment_id, summary, potent_affil)
+            writer.writerow([row[0], row[1], affiliation, comment, summary])
                 
 main()
