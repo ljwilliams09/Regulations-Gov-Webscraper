@@ -2,7 +2,7 @@ import logging
 
 logger = logging.getLogger("affiliations_logger")
 
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 if not logger.hasHandlers():
     handler = logging.FileHandler("affil.log")
