@@ -2,6 +2,7 @@ from openai import OpenAI
 import os
 import requests
 import time
+import helpers
 
 def client(filename):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -33,7 +34,7 @@ def client(filename):
     return response.output_text
 
 def scan(comment_id):
-    attachment = linker(comment_id)
+    attachment = helpers.linker(comment_id)
     if attachment == "N/A":
         return "N/A","N/A"
 
