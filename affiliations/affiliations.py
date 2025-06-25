@@ -17,8 +17,7 @@ def main():
         for row in reader:
             comment_id = row[0]
             title, comment, organization, gov_agency = c.scan(comment_id)
-            attachments = helpers.linker(comment_id)
-            summary, affiliation = a.scan(comment_id, attachments)
+            summary, affiliation = a.scan(comment_id)
 
                 
 main()

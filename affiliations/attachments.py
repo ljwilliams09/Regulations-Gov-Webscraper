@@ -34,13 +34,27 @@ def client(filename):
     return response.output_text
 
 def scan(comment_id):
-    attachment = helpers.linker(comment_id)
-    if attachment == "N/A":
-        return "N/A","N/A"
+    attachments = helpers.linker(comment_id)
+    if attachments == 0:
+        return None, None
 
-    response = requests.get(attachment)
-    if response.status_code != 200:
-        raise Exception(f"Failed to fetch attachment for comment {comment_id}")
+    for attachment in range(attachments):
+        url = f"https://downloads.regulations.gov/{comment_id}/attachment_{attachment+1}.pdf"
+        retries = 0
+        max_retries = 3
+
+        while True:
+            response = requests.get(url)
+            if response == 200:
+                break
+            elif response == 429:
+                time.sleep(3600)
+            else:
+                
+
+
+
+
 
     file = "temp_attachment.pdf"
 
