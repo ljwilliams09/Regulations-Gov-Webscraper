@@ -1,4 +1,5 @@
 import csv
+import html
 import requests
 import time
 
@@ -35,13 +36,15 @@ def linker(comment_id):
 
 def clean(text):
     """
-    Replaces carriage return ('\r') and newline ('\n') characters in the input string with spaces.
+    Cleans the input text by replacing carriage returns and newlines with spaces.
 
     Args:
-        comment (str): The input string to be cleaned.
+        text (str or None): The input string to clean. Can be None.
 
     Returns:
-        str: The cleaned string with all '\r' and '\n' characters replaced by spaces.
+        str or None: The cleaned string with '\r' and '\n' replaced by spaces, or None if input is None.
     """
-    return text.replace('\r', ' ').replace('\n', ' ')
+    if text == None:
+        return None
+    return html.unescape(text).replace('\r', ' ').replace('\n', ' ')
     
