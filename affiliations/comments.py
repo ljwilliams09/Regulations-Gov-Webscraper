@@ -4,6 +4,7 @@ from openai import OpenAI
 import requests
 import time
 import helpers as h
+from logger_config import logger
 
 def scan(comment_id):
     """
@@ -40,12 +41,14 @@ def scan(comment_id):
         else:
             retries += 1
             if retries >= max_retries:
+                logger.info("Failed to access the comments page after 3 retries")
                 raise Exception("Failed to access the comments page after 3 retries")
             time.sleep(2 ** retries)  # exponential backoff
 
     try:
         data = response.json()["data"]["attributes"]
     except (KeyError, ValueError, TypeError) as e:
+        logger.info("Unexpected response structure or invalid JSON")
         raise Exception("Unexpected response structure or invalid JSON") from e
 
 

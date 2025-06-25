@@ -1,9 +1,9 @@
 import csv
 import attachments as a
 import comments as c
-import helpers
 from dotenv import load_dotenv
 import openai
+from logger_config import logger
 import os
 
 def result(title, comment, organization, gov_agency, summary, affiliation):
@@ -59,12 +59,13 @@ def scan():
                 comment_id = row[0]
                 summary, affiliation = a.scan(comment_id)
                 title, comment, organization, gov_agency = c.scan(comment_id)
-                print(f"Title: {title}")
-                print(f"Comment: {comment}")
-                print(f"Organization: {organization}")
-                print(f"Gov_Agency: {gov_agency}")
-                print(f"Summary: {summary}")
-                print(f"Affiliation: {affiliation}")
+                logger.info(f"Looking at Comment: {comment_id}")
+                logger.info(f"Title: {title}")
+                logger.info(f"Comment: {comment}")
+                logger.info(f"Organization: {organization}")
+                logger.info(f"Gov_Agency: {gov_agency}")
+                logger.info(f"Summary: {summary}")
+                logger.info(f"Affiliation: {affiliation}")
                 final_affiliation = result(title, comment, organization, gov_agency, summary, affiliation)
                 writer.writerow([comment_id, title, final_affiliation, comment, summary])
 
