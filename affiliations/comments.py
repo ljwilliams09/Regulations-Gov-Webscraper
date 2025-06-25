@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import requests
 import time
+import helpers as h
 
 def scan(comment_id):
     """
@@ -48,5 +49,5 @@ def scan(comment_id):
         raise Exception("Unexpected response structure or invalid JSON") from e
 
 
-    return data["title"],data["comment"],data["organization"],data["govAgency"]
+    return h.clean(data["title"]),h.clean(data["comment"]),h.clean(data["organization"]),h.clean(data["govAgency"])
 
