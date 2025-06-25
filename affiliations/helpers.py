@@ -36,13 +36,13 @@ def linker(comment_id):
 
 def clean(text):
     """
-    Cleans the input text by replacing carriage returns and newlines with spaces.
+    Cleans a given text string by unescaping HTML entities and replacing carriage returns and newlines with spaces.
 
     Args:
-        text (str or None): The input string to clean. Can be None.
+        text (str or None): The input text to clean. Can be None.
 
     Returns:
-        str or None: The cleaned string with '\r' and '\n' replaced by spaces, or None if input is None.
+        str or None: The cleaned text with HTML entities unescaped and line breaks replaced by spaces, or None if input is None.
     """
     if text == None:
         return None
