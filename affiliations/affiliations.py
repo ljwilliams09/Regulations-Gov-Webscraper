@@ -52,9 +52,9 @@ def scan():
     with open(comments, 'r') as f:
         reader = csv.reader(f)
         next(f)
-        helpers.write_header(results)
     with open(results, 'a') as f:
         writer = csv.writer(f)
+        writer.writerow(["id", "title", "affiliation", "comment", "attachment_summary"])
         for row in reader:
             comment_id = row[0]
             summary, affiliation = a.scan(comment_id)

@@ -31,22 +31,7 @@ def linker(comment_id):
                 time.sleep(2 ** attempt) # exponential backoff
             else:
                 return attachment_number - 1
-            
 
-def write_header(filename):
-    """
-    Appends a header row to a CSV file with predefined column names.
-
-    Parameters:
-        filename (str): The path to the CSV file where the header will be written.
-
-    Notes:
-        - If the file already exists, the header will be appended to the end of the file.
-        - The header includes the following columns: "id", "title", "affiliation", "comment", "attachment_summary".
-    """
-    with open(filename, 'a') as r:
-            writer = csv.writer(r)
-            writer.writerow(["id", "title", "affiliation", "comment", "attachment_summary"])
 
 def clean(comment):
     """
