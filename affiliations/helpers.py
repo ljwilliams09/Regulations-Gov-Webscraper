@@ -1,4 +1,3 @@
-import csv
 import html
 import requests
 import time

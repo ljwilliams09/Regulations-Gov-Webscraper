@@ -3,6 +3,7 @@ import os
 import requests
 import time
 import helpers
+from pypdf import PdfWriter, PdfReader
 
 def client(filename):
     """
@@ -93,6 +94,38 @@ def get_attachment(comment_id, attachment):
             if retries >= max_retries:
                 raise Exception("Failed to access the comments page after 3 retries")
             time.sleep(2 ** retries) # exponential backoff
+
+def trim_attachment(file, num_pages=5):
+    """
+    Trims a PDF file to retain only the first and last `num_pages` pages.
+
+    This function reads a PDF file, keeps the first `num_pages` pages and the last `num_pages` pages,
+    and overwrites the original file with the trimmed version. If the PDF has fewer than
+    `2 * num_pages` pages, overlapping pages will not be duplicated.
+
+    Args:
+        file (str or file-like object): Path to the PDF file or a file-like object to be trimmed.
+        num_pages (int, optional): Number of pages to keep from the start and end of the PDF. Defaults to 5.
+
+    Raises:
+        FileNotFoundError: If the specified file does not exist.
+        PyPDF2.errors.PdfReadError: If the file is not a valid PDF.
+    """
+    reader = PdfReader(file)
+    writer = PdfWriter()
+
+    total_pages = len(reader.pages)
+
+    for i in range(min(num_pages, total_pages)):
+        writer.add_page(reader.pages[i])
+
+    start_last = max(total_pages - num_pages, num_pages)
+    for i in range(start_last, total_pages):
+        writer.add_page(reader.pages[i])
+
+    with open(file, "wb") as f:
+        writer.write(f)
+
 
 
 def scan(comment_id):
