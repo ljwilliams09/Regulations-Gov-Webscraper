@@ -3,6 +3,7 @@ import os
 import requests
 import time
 import helpers
+from logger_config import logger
 from pypdf import PdfWriter, PdfReader
 
 def client(filename):
@@ -138,12 +139,12 @@ def scan(comment_id):
         response = get_attachment(comment_id, attachment+1)
         with open(filename, "wb") as f:
             f.write(response.content)
-
+        trim_attachment(filename)
         gpt_response = client(filename)
         try:
             os.remove(filename)
         except FileNotFoundError:    
-            print("File could not be located and deleted")
+           logger.error("File could not be deleted")
         
         if gpt_response == -1:
             continue
