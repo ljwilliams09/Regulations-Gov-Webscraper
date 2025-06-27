@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import time
 import os
 from dotenv import load_dotenv
+from logger_config import logger
 
 def year_range(year):
     return f'{year}-01-01', f'{year}-12-31'
@@ -21,7 +22,7 @@ def clean_text(text):
 
 
 def fetch():
-    passed_through = False
+    load_dotenv()
     year = 1999
     url = "https://api.regulations.gov/v4/comments"
     output = "comments.csv"
@@ -49,11 +50,11 @@ def fetch():
             response = requests.get(url, params=params)
             if response.status_code != 200:
                 if response.status_code == 429:
-                    print("Limit Reached, going to sleep for a while")                    
+                    logger.info("Rate limited")                   
                     time.sleep(3600)
                     continue
                 else:
-                    print("Error connecting to API")
+                    logger(f"Error Connecting to API. Params: {params}")
                     break
 
             print(f"MAX COMMENTS: {(response.json())['meta']['totalElements']}")
