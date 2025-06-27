@@ -69,6 +69,7 @@ def fetch():
             if (response.json())["meta"]["hasNextPage"]:
                 page += 1
                 params["page[number]"] = page
+                logger.info(f"Elements left: {response.json()["meta"]["totalELements"]}")
             elif (not (response.json())["meta"]["hasNextPage"]) and (response.json())["meta"]["totalElements"] < 10000:
                 break
             else: 
