@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -N COMMENTS
+#PBS -N COMMENTS_2024
 #PBS -l walltime=200:00:00
 #PBS -M ljwilliams@colgate.edu
 #PBS -m bae
@@ -11,4 +11,4 @@ cd $PBS_O_WORKDIR
     
 source /local/JupyterHub/bin/activate && conda activate nlp
 
-python api_scraper.py
+python reg_api_v2.py
