@@ -11,7 +11,7 @@ def year_range(year):
 
 def date_format_param(last_date):
     date = datetime.strptime(last_date, "%Y-%m-%dT%H:%M:%SZ")
-    return (date - timedelta(hours=4)).strftime("%Y-%m-%d %H:%M:%S")
+    return (date - timedelta(hours=6)).strftime("%Y-%m-%d %H:%M:%S")
 
 def normalize_date(date):
     date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
@@ -64,12 +64,14 @@ def fetch():
                 if (comment["id"] not in ids):
                     writer.writerow([comment["id"],clean_text(comment["attributes"]["title"]),normalize_date(comment["attributes"]["postedDate"]),normalize_date(comment["attributes"]["lastModifiedDate"])])
                     ids.add(comment["id"])
+                else:
+                    logger.info(f"Duplicate on: {comment['id']}")
                 
             # Handle next page
             if (response.json())["meta"]["hasNextPage"]:
                 page += 1
                 params["page[number]"] = page
-                logger.info(f"Elements left: {response.json()["meta"]["totalELements"]}")
+                logger.info(f"Elements left: {response.json()['meta']['totalElements']}")
             elif (not (response.json())["meta"]["hasNextPage"]) and (response.json())["meta"]["totalElements"] < 10000:
                 break
             else: 
@@ -81,4 +83,4 @@ def fetch():
 
 
 
-print(date_format_param("2016-02-27T00:11:19Z"))
+fetch()
