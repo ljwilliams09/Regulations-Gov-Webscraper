@@ -61,7 +61,7 @@ def fetch():
     load_dotenv()
     year = 2024
     url = "https://api.regulations.gov/v4/comments"
-    output = f"web_scraper/{year}_comments.csv"
+    output = f"{year}_comments.csv"
     ids_set = set()
     ids_deque = deque(maxlen=10000)
 
