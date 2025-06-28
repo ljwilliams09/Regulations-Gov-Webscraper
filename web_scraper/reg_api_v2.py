@@ -5,6 +5,7 @@ import time
 import os
 from dotenv import load_dotenv
 from logger_config import logger
+from collections import deque
 
 def year_range(year):
     return f'{year}-01-01', f'{year}-12-31'
@@ -20,12 +21,26 @@ def normalize_date(date):
 def clean_text(text):
     return text.replace('\r', ' ').replace('\n', ' ').strip()
 
+def track_id(new_id, ids_set, ids_deque):
+    if new_id not in ids_set:
+        if len(ids_deque) == ids_deque.maxlen:
+            oldest = ids_deque.popleft()
+            ids_set.remove(oldest)
+        ids_deque.append(new_id)
+        ids_set.add(new_id)
+        return ids_set, ids_deque
+    else:
+        logger.error("track_id: id already in set")
+        raise Exception("")
+
+
+
 def test_reset_point(url, params, lastModifiedDate, totalElements): 
     hours = 1
-    logger.info(f"Testing Reset Point with {hours} hour(s) differential")
-    logger.info(f"totalElements Before: {totalElements}")
     while True:
-        params[lastModifiedDate] = date_format_param(lastModifiedDate, diff=hours)
+        logger.info(f"Testing Reset Point with {hours} hour(s) differential")
+        logger.info(f"totalElements Before: {totalElements}")
+        params["filter[lastModifiedDate][ge]"] = date_format_param(lastModifiedDate, diff=hours)
         response = requests.get(url, params=params)
         if response.status_code != 200:
             if response.status_code == 429:
@@ -33,26 +48,22 @@ def test_reset_point(url, params, lastModifiedDate, totalElements):
                 time.sleep(3600)
                 continue
             else:
-                logger(f"Error Connecting to API. Params: {params}")
+                logger.error(f"Testing error Connecting to API. Params: {params}")
                 break
         new_elements = response.json()["meta"]["totalElements"]
         logger.info(f"totalElements After: {new_elements}")
         if new_elements >= totalElements - 10000:
-            return lastModifiedDate
+            return date_format_param(lastModifiedDate, diff=hours)
         else:
-            hours + 1
-
-        
-        
-
-
+            hours += 1
 
 def fetch():
     load_dotenv()
     year = 1999
     url = "https://api.regulations.gov/v4/comments"
     output = "comments.csv"
-    ids = set()
+    ids_set = set()
+    ids_deque = deque(maxlen=10000)
 
     print(f"Year: {year}")
     page = 1
@@ -79,7 +90,7 @@ def fetch():
                     time.sleep(3600)
                     continue
                 else:
-                    logger(f"Error Connecting to API. Params: {params}")
+                    logger.error(f"Error Connecting to API. Params: {params}")
                     break
 
             print(f"MAX COMMENTS: {(response.json())['meta']['totalElements']}")
@@ -87,9 +98,9 @@ def fetch():
             totalElements = comments["meta"]["totalElements"]
           
             for comment in (comments["data"]):
-                if (comment["id"] not in ids):
+                if (comment["id"] not in ids_set):
                     writer.writerow([comment["id"],clean_text(comment["attributes"]["title"]),normalize_date(comment["attributes"]["postedDate"]),normalize_date(comment["attributes"]["lastModifiedDate"])])
-                    ids.add(comment["id"])
+                    ids_set, ids_deque = track_id.add(comment["id"], ids_set, ids_deque)
                 else:
                     logger.info(f"Duplicate on: {comment['id']}")
                 
@@ -102,9 +113,10 @@ def fetch():
                 break
             else: 
                 logger.info("RESET PARAMETERS")
-                params["filter[lastModifiedDate][ge]"] = test_reset_point(url=url, params=params, lastModifiedDate=max(comment["attributes"]["lastModifiedDate"] for comment in (comments["data"])), totalElements=comments["meta"]["totalElements"])
                 page = 1
                 params["page[number]"] = page
+                params["filter[lastModifiedDate][ge]"] = test_reset_point(url=url, params=params, lastModifiedDate=max(comment["attributes"]["lastModifiedDate"] for comment in (comments["data"])), totalElements=totalElements)
+        
 
 
 
