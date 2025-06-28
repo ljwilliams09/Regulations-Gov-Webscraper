@@ -59,13 +59,13 @@ def test_reset_point(url, params, lastModifiedDate, totalElements):
 
 def fetch():
     load_dotenv()
-    year = 1999
+    year = 2024
     url = "https://api.regulations.gov/v4/comments"
-    output = "comments.csv"
+    output = f"web_scraper/{year}_comments.csv"
     ids_set = set()
     ids_deque = deque(maxlen=10000)
 
-    print(f"Year: {year}")
+    # print(f"Year: {year}")
     page = 1
     ge, le = year_range(year)
     params = {
@@ -80,8 +80,8 @@ def fetch():
         writer = csv.writer(f)
         writer.writerow(["id", "title", "postedDate", "lastModifiedDate"])
         while True:
-            print(f"Page: {page}")
-            print(f"Params: {params}")
+            # print(f"Page: {page}")
+            # print(f"Params: {params}")
                 
             response = requests.get(url, params=params)
             if response.status_code != 200:
@@ -93,14 +93,14 @@ def fetch():
                     logger.error(f"Error Connecting to API. Params: {params}")
                     break
 
-            print(f"MAX COMMENTS: {(response.json())['meta']['totalElements']}")
+            # print(f"MAX COMMENTS: {(response.json())['meta']['totalElements']}")
             comments = response.json()
             totalElements = comments["meta"]["totalElements"]
           
             for comment in (comments["data"]):
                 if (comment["id"] not in ids_set):
                     writer.writerow([comment["id"],clean_text(comment["attributes"]["title"]),normalize_date(comment["attributes"]["postedDate"]),normalize_date(comment["attributes"]["lastModifiedDate"])])
-                    ids_set, ids_deque = track_id.add(comment["id"], ids_set, ids_deque)
+                    ids_set, ids_deque = track_id(comment["id"], ids_set, ids_deque)
                 else:
                     logger.info(f"Duplicate on: {comment['id']}")
                 
@@ -117,7 +117,5 @@ def fetch():
                 params["page[number]"] = page
                 params["filter[lastModifiedDate][ge]"] = test_reset_point(url=url, params=params, lastModifiedDate=max(comment["attributes"]["lastModifiedDate"] for comment in (comments["data"])), totalElements=totalElements)
         
-
-
 
 fetch()
