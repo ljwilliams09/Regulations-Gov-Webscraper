@@ -96,6 +96,7 @@ def fetch():
                         continue
                     else:
                         logger.error(f"Error Connecting to API. Params: {params}")
+                        raise Exception(f"Error Connecting to API. Params: {params}")
                         break
 
                 # print(f"MAX COMMENTS: {(response.json())['meta']['totalElements']}")
