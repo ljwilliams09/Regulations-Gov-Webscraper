@@ -81,7 +81,7 @@ def fetch():
                     "page[number]" : page,
                     "page[size]" : 250            
         }
-        with open(output, 'w') as f:
+        with open(output, 'a') as f:
             writer = csv.writer(f)
             writer.writerow(["id", "title", "postedDate", "lastModifiedDate"])
             while True:
