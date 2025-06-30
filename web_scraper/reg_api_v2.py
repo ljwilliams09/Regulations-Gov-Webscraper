@@ -65,7 +65,10 @@ def fetch():
 
     while year >= 1800 and year <= 2025:
         year -= 1
-        logger.info("************ YEAR ***********")
+        logger.info(f"******** COUNT = {count} ********")
+        count = 0
+        logger.info(f"************ {year} ***********")
+
         ids_set = set()
         ids_deque = deque(maxlen=10000)
         # print(f"Year: {year}")
@@ -104,6 +107,7 @@ def fetch():
                     if (comment["id"] not in ids_set):
                         writer.writerow([comment["id"],clean_text(comment["attributes"]["title"]),normalize_date(comment["attributes"]["postedDate"]),normalize_date(comment["attributes"]["lastModifiedDate"])])
                         ids_set, ids_deque = track_id(comment["id"], ids_set, ids_deque)
+                        count += 1
                     else:
                         logger.info(f"Duplicate on: {comment['id']}")
                     
