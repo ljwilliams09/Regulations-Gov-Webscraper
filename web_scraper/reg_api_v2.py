@@ -65,7 +65,6 @@ def fetch():
 
     while year >= 1800 and year <= 2025:
         year -= 1
-        logger.info(f"******** COUNT = {count} ********")
         count = 0
         logger.info(f"************ {year} ***********")
 
@@ -123,6 +122,8 @@ def fetch():
                     page = 1
                     params["page[number]"] = page
                     params["filter[lastModifiedDate][ge]"] = test_reset_point(url=url, params=params, lastModifiedDate=max(comment["attributes"]["lastModifiedDate"] for comment in (comments["data"])), totalElements=totalElements)
+
+        logger.info(f"******** COUNT = {count} ********")
             
 
 fetch()
