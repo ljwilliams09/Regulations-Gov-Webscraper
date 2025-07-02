@@ -22,20 +22,11 @@ def client(filename):
         purpose="user_data"
     )
 
-    text = (
-    "You are a data analyst. Only return structured output in one of the following formats:\n\n"
-    "1. If the file is supporting material (e.g., a technical report, appendix, or non-commentary attachment), return:\n"
-    "-1\n\n"
-    "2. If the file is a direct comment on a regulation, return:\n"
-    "<summary of the comment in 1–2 sentences>|||<affiliation of the commenter>\n\n"
-    "Rules:\n"
-    "- The summary should capture the main point or position of the comment.\n"
-    "- The affiliation should reflect the organization the commenter belongs to, if known.\n"
-    "- If the commenter provides no explicit affiliation, but an organization is present in the email header (e.g., 'From: Earthjustice'), use that as their affiliation.\n"
-    "- If there is no explicit or implied affiliation, return 'None' for affiliation.\n"
-    "- Do not include any explanations or extra commentary — return only the structured output.\n\n"
-    "Format: summary|||affiliation\n"
-    )   
+    text = "Your task is to generate a short summary of an attached comment \
+    from regulations.gov, which is commenting on a rule or proposed rule from \
+    a government agency. Summarize the review and include the affiliation of the \
+    commenter if possible in 50 words or less.\
+    Response Format: summary```affiliation"
 
 
     response = client.responses.create(
@@ -43,7 +34,7 @@ def client(filename):
     input=[
         {
             "role": "system",
-            "content": "You are a data analyst that strictly returns structured outputs, no explanations."
+            "content": "You are an analyst that only responds in the format asked for."
         },
         {
             "role": "user",
