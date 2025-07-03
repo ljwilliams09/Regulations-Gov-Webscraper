@@ -79,14 +79,16 @@ def main():
         writer = csv.writer(f)
         writer.writerow(["docketId", "title", "rulemaking"])
         page = 1
+        params = {
+            "api_key" : "5cptlDctYd9BNNtx0IzLve8hK8qr70SpImLIkwpK",
+            "sort" : "lastModifiedDate",
+            "page[size]" : 250, 
+            "page[number]" : page
+        }
         while True:
-            params = {
-                "api_key" : "5cptlDctYd9BNNtx0IzLve8hK8qr70SpImLIkwpK",
-                "sort" : "lastModifiedDate,docketId",
-                "page[size]" : 250, 
-                "page[number]" : page
-            }
-        
+            if page == 1 or page == 40:
+                logger.info(f"Page Call: {page}")
+                logger.info(f"Params: {params}")
             response = validate_request(url, params)
 
             dockets = response.json()
@@ -106,17 +108,19 @@ def main():
             if dockets["meta"]["hasNextPage"]:
                 page += 1
                 params["page[number]"] = page
-            elif (not dockets["meta"]["hasNextPage"]) and dockets["meta"]:
+            elif (not dockets["meta"]["hasNextPage"]) and totalElements <= 10000:
+                logger.info("Last Page")
                 break
             else:
                 logger.info(f"Elements left: {dockets['meta']['totalElements']}")
                 logger.info("RESET PARAMETERS")
                 page = 1
                 params["page[number]"] = page
-                params["filter[lastModifiedDate[ge]"] = test_reset_point(
+                print("Last Date:", docket["attributes"]["lastModifiedDate"])
+                params["filter[lastModifiedDate][ge]"] = test_reset_point(
                     url=url,
                     params=params,
-                    lastModifiedDate=max(docket["attributes"]["lastModifiedDate"] for docket in dockets["data"]),
+                    lastModifiedDate= max(docket["attributes"]["lastModifiedDate"] for docket in dockets["data"]),
                     totalElements=totalElements
                 )
 
