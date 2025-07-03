@@ -38,6 +38,7 @@ def validate_request(url, params):
                 retries += 1
                 if retries >= max_tries:
                     logger.info("Failure to connect")
+                    break
                 time.sleep(retries ** 2) # exponential backoff
         return response
     
@@ -68,7 +69,7 @@ def test_reset_point(url, params, lastModifiedDate, totalElements):
 
 def main():
     load_dotenv()
-    results = "dockets.csv" # col 1: docketId, col 2: title, col 3: rulemaking or nonrulemaking docket
+    results = "dockets/dockets.csv" # col 1: docketId, col 2: title, col 3: rulemaking or nonrulemaking docket
     url = "https://api.regulations.gov/v4/dockets"
     ids_set = set()
     ids_deque = deque(maxlen=10000)
@@ -82,13 +83,16 @@ def main():
             params = {
                 "api_key" : os.getenv("EG_GOV_API_KEY_ES"),
                 "sort" : "lastModifiedDate,documentId",
-                "filter[lastModifiedDate]" : " "
+                "page[size]" : 250, 
+                "page[number]" : page
             }
         
             response = validate_request(url, params)
 
             dockets = response.json()
+            print(dockets)
             totalElements = dockets["meta"]["totalElements"]
+
             for docket in dockets["data"]:
                 if docket["id"] not in ids_set:
                     writer.writerow([
@@ -99,11 +103,11 @@ def main():
                     ids_set, ids_deque = track_id(docket["id"], ids_set, ids_deque)
                     count += 1
                 else:
-                    logger.info(f"Duplicate on: {docket["id"]}")
+                    logger.info(f"Duplicate on: {docket['id']}")
 
             if dockets["meta"]["hasNextPage"]:
                 page += 1
-                params["page[number]"] = 1
+                params["page[number]"] = page
             elif (not dockets["meta"]["hasNextPage"]) and dockets["meta"]:
                 break
             else:
@@ -111,15 +115,16 @@ def main():
                 logger.info("RESET PARAMETERS")
                 page = 1
                 params["page[number]"] = page
-                params["filter[lastModifiedDate[ge]]"] = test_reset_point(
+                params["filter[lastModifiedDate[ge]"] = test_reset_point(
                     url=url,
                     params=params,
-                    lastModifiedDate=max(docket["attributes"]["lastModifiedDate"] for docket in dockets["date"])
+                    lastModifiedDate=max(docket["attributes"]["lastModifiedDate"] for docket in dockets["data"]),
+                    totalElements=totalElements
                 )
 
             logger.info(f"******** COUNT = {count}********")
                 
-
+main()
                     
             
                 
