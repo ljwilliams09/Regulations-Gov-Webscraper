@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import openai
 from logger_config import logger
 import os
+import helpers as h
 
 def result(title, comment, organization, gov_agency, summary, affiliation):
     """
@@ -52,9 +53,9 @@ def scan():
     with open(comments, 'r') as f:
         reader = csv.reader(f)
         next(f)
-        with open(results, 'a') as r:
+        with open(results, 'w') as r:
             writer = csv.writer(r)
-            writer.writerow(["id", "title", "affiliation", "comment", "attachment_summary"])
+            writer.writerow(["id", "title", "affiliation", "comment", "attachment_summary", "attachment_affiliation"])
             for row in reader:
                 comment_id = row[0]
                 summary, affiliation = a.scan(comment_id)
@@ -67,7 +68,7 @@ def scan():
                 logger.info(f"Summary: {summary}")
                 logger.info(f"Affiliation: {affiliation}")
                 final_affiliation = result(title, comment, organization, gov_agency, summary, affiliation)
-                writer.writerow([comment_id, title, final_affiliation, comment, summary])
+                writer.writerow([h.clean(comment_id), h.clean(title), h.clean(final_affiliation), h.clean(comment), h.clean(summary), h.clean(affiliation)])
 
 scan()
 

@@ -24,6 +24,8 @@ def date_format_param(last_date, diff=6):
     return (date - timedelta(hours=diff)).strftime("%Y-%m-%d %H:%M:%S")
 
 def clean_text(text):
+    if text == None:
+        return None
     return text.replace('\n', ' ').replace('\r', ' ')
 
 def validate_request(url, params):

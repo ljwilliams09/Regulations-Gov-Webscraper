@@ -22,12 +22,19 @@ def client(filename):
         purpose="user_data"
     )
 
-    text = "Your task is to generate a short summary of an attached comment \
-    from regulations.gov, which is commenting on a rule or proposed rule from \
-    a government agency. Summarize the review and include the affiliation of the \
-    commenter if possible in 50 words or less.\
-    Response Format: summary```affiliation"
+    text = """
+    You are given a comment from Regulations.gov. Your task is to:
 
+    1. Summarize the comment in 50 words or fewer.
+    2. If the document is supporting material only, return `-1`.
+    3. Extract the affiliation if possible.
+
+    Respond as:
+    <summary>```<affiliation>
+
+    Example:
+    This rule unfairly burdens small farmers...```National Farmers Union
+    """
 
     response = client.responses.create(
     model='gpt-4.1',
@@ -139,8 +146,7 @@ def scan(comment_id):
         
         if gpt_response == -1:
             continue
-        results = gpt_response.split('|||')
+        results = gpt_response.split('```')
         return results[0], results[1]
         
     return None, None
-
