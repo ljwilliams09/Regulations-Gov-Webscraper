@@ -1,0 +1,14 @@
+#!/bin/bash
+#PBS -N DOCKETS
+#PBS -l walltime=200:00:00
+#PBS -M ljwilliams@colgate.edu
+#PBS -m bae
+#PBS -l mem=4gb
+#PBS -q cpu
+
+cd $PBS_O_WORKDIR
+        
+    
+source /local/JupyterHub/bin/activate && conda activate nlp
+
+python dockets.py
