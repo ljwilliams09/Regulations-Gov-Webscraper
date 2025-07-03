@@ -1,32 +1,128 @@
 import requests
 import os
+import csv
 import time
-from dotenv import load_dotenv()
+from datetime import datetime, timedelta
+from dotenv import load_dotenv
+from collections import deque
+from logger_dockets import logger
 
+def track_id(new_id, ids_set, ids_deque):
+    if new_id not in ids_set:
+        if len(ids_deque) == ids_deque.maxlen:
+            oldest = ids_deque.popleft()
+            ids_set.remove(oldest)
+        ids_deque.append(new_id)
+        ids_set.add(new_id)
+        return ids_set, ids_deque
+    else:
+        logger.info("Track_id: id already in set")
+        raise Exception("")
+    
+def date_format_param(last_date, diff=6):
+    date = datetime.strptime(last_date, "%Y-%m-%dT%H:%M:%SZ")
+    return (date - timedelta(hours=diff)).strftime("%Y-%m-%d %H:%M:%S")
+
+def validate_request(url, params):
+    retries = 0
+    max_tries = 5
+    while True:
+        response = requests.get(url, params)
+
+        if response.status_code != 200:
+            if response.status_code == 429:
+                logger.info("Rate limited")
+                time.sleep(3600)
+                continue
+            else:
+                retries += 1
+                if retries >= max_tries:
+                    logger.info("Failure to connect")
+                time.sleep(retries ** 2) # exponential backoff
+        return response
+    
+
+def test_reset_point(url, params, lastModifiedDate, totalElements): 
+    hours = 1
+    while True:
+        logger.info(f"Testing Reset Point with {hours} hour(s) differential")
+        logger.info(f"totalElements Before: {totalElements}")
+        params["filter[lastModifiedDate][ge]"] = date_format_param(lastModifiedDate, diff=hours)
+        response = requests.get(url, params=params)
+        if response.status_code != 200:
+            if response.status_code == 429:
+                logger.info("Rate limited")                   
+                time.sleep(3600)
+                continue
+            else:
+                logger.info(f"Testing error Connecting to API. Params: {params}")
+                break
+        new_elements = response.json()["meta"]["totalElements"]
+        logger.info(f"totalElements After: {new_elements}")
+        if new_elements >= totalElements - 10000:
+            return date_format_param(lastModifiedDate, diff=hours)
+        else:
+            hours += 1
 
 
 
 def main():
-    load_dotev()
-    results = "dockets.csv" # a csv of valid docket Id's 
+    load_dotenv()
+    results = "dockets.csv" # col 1: docketId, col 2: title, col 3: rulemaking or nonrulemaking docket
     url = "https://api.regulations.gov/v4/dockets"
-    RULES = 1
-    PROPOSED_RULES = 1
+    ids_set = set()
+    ids_deque = deque(maxlen=10000)
+    count = 1
 
     with open(results, 'a') as f:
+        writer = csv.writer(f)
+        writer.writerow(["docketId", "title", "rulemaking"])
         page = 1
         while True:
-
             params = {
-                "api_key" : os.getenv("REG_GOV_API_KEY_ES"),
+                "api_key" : os.getenv("EG_GOV_API_KEY_ES"),
                 "sort" : "lastModifiedDate,documentId",
-                "page[size]" : 250,
-                "page[number]" : page
+                "filter[lastModifiedDate]" : " "
             }
+        
+            response = validate_request(url, params)
 
-            response = requests.get(url, params)
+            dockets = response.json()
+            totalElements = dockets["meta"]["totalElements"]
+            for docket in dockets["data"]:
+                if docket["id"] not in ids_set:
+                    writer.writerow([
+                        docket["id"],
+                        docket["attributes"]["title"],
+                        docket["attributes"]["docketType"]
+                    ])
+                    ids_set, ids_deque = track_id(docket["id"], ids_set, ids_deque)
+                    count += 1
+                else:
+                    logger.info(f"Duplicate on: {docket["id"]}")
 
-            if response.status_code != 200:
-                if response.status_code == 429:
+            if dockets["meta"]["hasNextPage"]:
+                page += 1
+                params["page[number]"] = 1
+            elif (not dockets["meta"]["hasNextPage"]) and dockets["meta"]:
+                break
+            else:
+                logger.info(f"Elements left: {dockets['meta']['totalElements']}")
+                logger.info("RESET PARAMETERS")
+                page = 1
+                params["page[number]"] = page
+                params["filter[lastModifiedDate[ge]]"] = test_reset_point(
+                    url=url,
+                    params=params,
+                    lastModifiedDate=max(docket["attributes"]["lastModifiedDate"] for docket in dockets["date"])
+                )
+
+            logger.info(f"******** COUNT = {count}********")
+                
+
+                    
+            
+                
+
 
 
