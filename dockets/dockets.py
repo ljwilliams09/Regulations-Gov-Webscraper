@@ -23,6 +23,9 @@ def date_format_param(last_date, diff=6):
     date = datetime.strptime(last_date, "%Y-%m-%dT%H:%M:%SZ")
     return (date - timedelta(hours=diff)).strftime("%Y-%m-%d %H:%M:%S")
 
+def clean_text(text):
+    return text.replace('\n', ' ').replace('\r', ' ')
+
 def validate_request(url, params):
     retries = 0
     max_tries = 5
@@ -97,7 +100,7 @@ def main():
                 if docket["id"] not in ids_set:
                     writer.writerow([
                         docket["id"],
-                        docket["attributes"]["title"],
+                        clean_text(docket["attributes"]["title"]),
                         docket["attributes"]["docketType"]
                     ])
                     ids_set, ids_deque = track_id(docket["id"], ids_set, ids_deque)
