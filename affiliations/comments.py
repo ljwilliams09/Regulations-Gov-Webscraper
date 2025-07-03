@@ -24,7 +24,7 @@ def scan(comment_id):
         Exception: If the API cannot be accessed after the maximum number of retries, or if the response structure is invalid.
     """
     load_dotenv()
-    regulations_api = os.getenv("REG_GOV_API_KEY_AB")
+    regulations_api = os.getenv("REG_GOV_API_KEY_ES")
     params = {
         "api_key": regulations_api
     }
