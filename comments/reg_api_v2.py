@@ -61,7 +61,7 @@ def fetch():
     load_dotenv()
     year = 2025
     url = "https://api.regulations.gov/v4/comments"
-    output = f"comments.csv"
+    output = f"comments{year}.csv"
 
     logger.info(f"************ {year} ***********")
 
@@ -70,7 +70,7 @@ def fetch():
     page = 1
     ge, le = year_range(year)
     params = {
-        "api_key": os.getenv("REG_GOV_API_KEY_LW"),
+        "api_key": " ",
         "filter[postedDate][ge]": ge,
         "filter[postedDate][le]": le,
         "sort": "lastModifiedDate,documentId",
