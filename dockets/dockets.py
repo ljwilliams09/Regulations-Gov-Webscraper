@@ -73,7 +73,7 @@ def main():
     url = "https://api.regulations.gov/v4/dockets"
     ids_set = set()
     ids_deque = deque(maxlen=10000)
-    count = 1
+    count = 0
 
     with open(results, 'a') as f:
         writer = csv.writer(f)
@@ -81,8 +81,8 @@ def main():
         page = 1
         while True:
             params = {
-                "api_key" : os.getenv("EG_GOV_API_KEY_ES"),
-                "sort" : "lastModifiedDate,documentId",
+                "api_key" : "5cptlDctYd9BNNtx0IzLve8hK8qr70SpImLIkwpK",
+                "sort" : "lastModifiedDate,docketId",
                 "page[size]" : 250, 
                 "page[number]" : page
             }
@@ -90,9 +90,7 @@ def main():
             response = validate_request(url, params)
 
             dockets = response.json()
-            print(dockets)
-            totalElements = dockets["meta"]["totalElements"]
-
+            totalElements = response.json()["meta"]["totalElements"]
             for docket in dockets["data"]:
                 if docket["id"] not in ids_set:
                     writer.writerow([
@@ -122,7 +120,7 @@ def main():
                     totalElements=totalElements
                 )
 
-            logger.info(f"******** COUNT = {count}********")
+        logger.info(f"******** COUNT = {count}********")
                 
 main()
                     
