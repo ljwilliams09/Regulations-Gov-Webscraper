@@ -3,7 +3,7 @@ import os
 import requests
 import time
 import helpers
-from logger_config import logger
+from affiliations.logger_affil import logger
 from pypdf import PdfWriter, PdfReader
 
 def client(filename):
@@ -21,6 +21,9 @@ def client(filename):
         file=open(filename, "rb"),
         purpose="user_data"
     )
+    with open("config.json", 'r') as f:
+        config = f.json()
+
 
     text = """
     You are given a comment from Regulations.gov. Your task is to:
@@ -37,7 +40,7 @@ def client(filename):
     """
 
     response = client.responses.create(
-    model='gpt-4.1',
+    model=config["attachment_model"],
     input=[
         {
             "role": "system",

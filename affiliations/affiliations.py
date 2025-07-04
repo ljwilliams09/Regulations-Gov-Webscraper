@@ -3,7 +3,7 @@ import attachments as a
 import comments as c
 from dotenv import load_dotenv
 import openai
-from logger_config import logger
+from affiliations.logger_affil import logger
 import os
 import helpers as h
 
@@ -23,6 +23,10 @@ def result(title, comment, organization, gov_agency, summary, affiliation):
         str or None: The determined affiliation of the commenter, or None if no affiliation is found.
     """
     load_dotenv()
+    with open("config.json", 'r') as f:
+        config = f.json()
+
+
     client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     prompt = (
         "Here are a variety of variables for a comment on a regulation from regulation.gov, examine them and determine an affiliation for the commenter. Return only the affiliation, or None if there is not one.\n"
@@ -36,7 +40,7 @@ def result(title, comment, organization, gov_agency, summary, affiliation):
     )
 
     response = client.chat.completions.create(
-        model="o4-mini",
+        model=config["assessment_model"],
         messages=[
             {"role" : "system", "content" : "You are a data analyst who only returns data in the exact format as specified."},
             {"role" : "user", "content" : prompt}

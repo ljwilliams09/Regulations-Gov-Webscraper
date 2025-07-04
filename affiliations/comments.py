@@ -4,7 +4,7 @@ from openai import OpenAI
 import requests
 import time
 import helpers as h
-from logger_config import logger
+from affiliations.logger_affil import logger
 
 def scan(comment_id):
     """

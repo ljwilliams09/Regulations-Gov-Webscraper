@@ -5,8 +5,8 @@ A Python-based web scraper for collecting data from [Regulations.gov](https://ww
 ## Features
 
 - Scrapes regulatory dockets, documents, and public comments.
-- Supports filtering by agency, date, and keyword.
-- Outputs data in CSV or JSON format.
+- Supports filtering by year.
+- Outputs data in CSV.
 - Handles pagination and rate limiting.
 - Modular and extensible codebase.
 
@@ -22,32 +22,31 @@ A Python-based web scraper for collecting data from [Regulations.gov](https://ww
    pip install -r requirements.txt
    ```
 
-## Usage
+Output files will be saved in the directory of origin.
 
-Update `config.json` with your desired parameters (e.g., agency, date range, keywords).
-
-Run the scraper:
-
-```bash
-python scraper.py
-```
-
-Output files will be saved in the `output/` directory.
-
-## Configuration
+## Guide
 
 ### Comments
 
 - `config.json`: Parameters for comments.py and logger_config.py, year and api_key
-- `comments.py`: Retrieves comments metadata on the regulations.gov API posted during the parameter year
+- `comments.py`: Main script; retrieves comments metadata on the regulations.gov API posted during the parameter year
 - `logger_config.py`: Initializes logger for `comments.py`.
 - `run.pbs`: Portable batch script for running on a server; in this case on Colgate's supercomputer
 
 ### Dockets
 
-- `dockets.py`: Retrieves all docket metadata from the regulations.gov API.
+- `dockets.py`: Main script; retrieves all docket metadata from the regulations.gov API.
 - `logger_dockets.py`: Initializes logger for `dockets.py`.
 - `run.pbs`: Portable batch script for running on a server; in this case on Colgate's supercomputer.
+
+### Affiliations
+
+- `config.json`: Parameters for `attachments.py` and `affiliations.py` to specifiy openai models to be used.
+- `logger_affil.py`: Initializes logger for `affilations.py`.
+- `helpers.py`: Helper functions for `affiliations.py` and `comments.py`.
+- `attachments.py`: Handles attached files (if present) and evaluates the affiliation and provides a summary.
+- `affiliations.py`: Takes all comment metadata and attachment summary to determine an affiliation.
+- `comments.py`: Gathers comment metadata for a single comment.
 
 ## Contributing
 
