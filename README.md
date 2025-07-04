@@ -45,13 +45,16 @@ Output files will be saved in the directory of origin.
 - `logger_affil.py`: Initializes logger for `affilations.py`.
 - `helpers.py`: Helper functions for `affiliations.py` and `comments.py`.
 - `attachments.py`: Handles attached files (if present) and evaluates the affiliation and provides a summary.
-- `affiliations.py`: Takes all comment metadata and attachment summary to determine an affiliation.
-- `comments.py`: Gathers comment metadata for a single comment.
+- `affiliations.py`: Takes all comment metadata and attachment summary to det
+
+### Testing and Debugging
+
+- Random test files and markdown files used to navigate the regulations.gov API and determine accuracy.
 
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss your ideas.
 
-## Disclaimer
+## Additional Info
 
-This tool is for research purposes only. Please respect the [Regulations.gov Terms of Use](https://www.regulations.gov/terms).
+For any questions on the regulations.gov API, visit https://open.gsa.gov/api/regulationsgov/.
