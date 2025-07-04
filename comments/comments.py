@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import time
 import os
 from dotenv import load_dotenv
-from logger_config import logger
+from comments.logger_comments import logger
 from collections import deque
 
 def year_range(year):
@@ -59,8 +59,12 @@ def test_reset_point(url, params, lastModifiedDate, totalElements):
 
 def fetch():
     load_dotenv()
-    year = 2025
+    with open('config.json', 'r') as f:
+        config = f.json()
+    year = config["year"]
+    api_key = config["api_key"]
     url = "https://api.regulations.gov/v4/comments"
+
     output = f"comments{year}.csv"
 
     logger.info(f"************ {year} ***********")
@@ -70,7 +74,7 @@ def fetch():
     page = 1
     ge, le = year_range(year)
     params = {
-        "api_key": " ",
+        "api_key": api_key,
         "filter[postedDate][ge]": ge,
         "filter[postedDate][le]": le,
         "sort": "lastModifiedDate,documentId",

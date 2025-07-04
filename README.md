@@ -36,29 +36,22 @@ Output files will be saved in the `output/` directory.
 
 ## Configuration
 
-- `config.json`: Set search parameters and output options.
-- `scraper.py`: Main script for running the web scraper.
-- `utils.py`: Helper functions for data processing.
+### Comments
 
-## Example
+- `config.json`: Parameters for comments.py and logger_config.py, year and api_key
+- `comments.py`: Retrieves comments metadata on the regulations.gov API posted during the parameter year
+- `logger_config.py`: Initializes logger for `comments.py`.
+- `run.pbs`: Portable batch script for running on a server; in this case on Colgate's supercomputer
 
-```json
-{
-  "agency": "EPA",
-  "start_date": "2023-01-01",
-  "end_date": "2023-12-31",
-  "keywords": ["climate", "emissions"],
-  "output_format": "csv"
-}
-```
+### Dockets
+
+- `dockets.py`: Retrieves all docket metadata from the regulations.gov API.
+- `logger_dockets.py`: Initializes logger for `dockets.py`.
+- `run.pbs`: Portable batch script for running on a server; in this case on Colgate's supercomputer.
 
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss your ideas.
-
-## License
-
-This project is licensed under the MIT License.
 
 ## Disclaimer
 
