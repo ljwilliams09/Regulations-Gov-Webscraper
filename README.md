@@ -1,12 +1,13 @@
 # Regulations-Gov-Webscraper
 
-A Python-based web scraper for collecting data from [Regulations.gov](https://www.regulations.gov/). This tool is designed to automate the extraction of regulatory documents, comments, and metadata for research and analysis purposes.
+A Python-based web-scraper and evaluator for collecting data from [Regulations.gov](https://www.regulations.gov/). This tool is designed to automate the extraction of regulatory documents, comments, and metadata for research and analysis purposes.
 
 ## Features
 
 - Scrapes regulatory dockets, documents, and public comments.
 - Supports filtering by year.
 - Outputs data in CSV.
+- Affiliation evaluation for comments
 - Handles pagination and rate limiting.
 - Modular and extensible codebase.
 
