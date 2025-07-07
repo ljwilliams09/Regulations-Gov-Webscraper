@@ -2,7 +2,7 @@ import requests
 import csv
 from datetime import datetime, timedelta
 import time
-import os
+import json
 from dotenv import load_dotenv
 from comments.logger_comments import logger
 from collections import deque
@@ -34,7 +34,6 @@ def track_id(new_id, ids_set, ids_deque):
         raise Exception("")
 
 
-
 def test_reset_point(url, params, lastModifiedDate, totalElements): 
     hours = 1
     while True:
@@ -57,12 +56,31 @@ def test_reset_point(url, params, lastModifiedDate, totalElements):
         else:
             hours += 1
 
+def validate_request(url, params):
+    retries = 0
+    limit = 5
+    while True:
+        response = requests.get(url, params=params)
+        if response.status_code != 200:
+            if response.status_code == 429:
+                logger.info("Rate limited")
+                time.sleep(3600)
+                continue
+            else:
+                retries += 1
+                if retries >= limit:
+                    logger.error(f"Error Connecting to API. Params: {params}")
+                    raise Exception(f"Error Connecting to API. Params: {params}")
+                time.sleep(2 ** retries)
+                continue
+        return response
+
 def fetch():
     load_dotenv()
     with open('config.json', 'r') as f:
-        config = f.json()
+        config = json.load(f)
     year = config["year"]
-    api_key = config["api_key"]
+    api_key = config["on"]
     url = "https://api.regulations.gov/v4/comments"
 
     output = f"comments{year}.csv"
@@ -86,24 +104,7 @@ def fetch():
         writer.writerow(["id", "title", "postedDate", "lastModifiedDate"])
         count = 0
         while True:
-            retries = 0
-            limit = 5
-            while True:
-                response = requests.get(url, params=params)
-                if response.status_code != 200:
-                    if response.status_code == 429:
-                        logger.info("Rate limited")
-                        time.sleep(3600)
-                        continue
-                    else:
-                        retries += 1
-                        if retries >= limit:
-                            logger.error(f"Error Connecting to API. Params: {params}")
-                            raise Exception(f"Error Connecting to API. Params: {params}")
-                        time.sleep(2 ** retries)
-                        continue
-                break
-
+            response = validate_request(url, params)
             comments = response.json()
             totalElements = comments["meta"]["totalElements"]
 
