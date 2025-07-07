@@ -3,7 +3,8 @@ import os
 import requests
 import time
 import helpers
-from affiliations.logger_affil import logger
+import json
+from logger_affil import logger
 from pypdf import PdfWriter, PdfReader
 
 def client(filename):
@@ -21,16 +22,16 @@ def client(filename):
         file=open(filename, "rb"),
         purpose="user_data"
     )
-    with open("config.json", 'r') as f:
-        config = f.json()
+    with open("affiliations/config.json", 'r') as f:
+        config = json.load(f)
 
 
     text = """
     You are given a comment from Regulations.gov. Your task is to:
 
     1. Summarize the comment in 50 words or fewer.
-    2. If the document is supporting material only, return `-1`.
-    3. Extract the affiliation if possible.
+    2. If the document is supporting material to the comment, only return `-1`.
+    3. Extract the affiliation if possible, if there is none, only return `None`.
 
     Respond as:
     <summary>```<affiliation>
@@ -40,26 +41,27 @@ def client(filename):
     """
 
     response = client.responses.create(
-    model=config["attachment_model"],
-    input=[
-        {
-            "role": "system",
-            "content": "You are an analyst that only responds in the format asked for."
-        },
-        {
-            "role": "user",
-            "content": [
-                {
-                    "type": "input_text",
-                    "text": text
-                },
-                {
-                    "type": "input_file",
-                    "file_id": file.id
-                }
-            ]
-        }
-    ]
+        model=config["attachment_model"],
+        input=[
+            {
+                "role": "system",
+                "content": "You are an analyst that only responds in the format asked for."
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "input_text",
+                        "text": text
+                    },
+                    {
+                        "type": "input_file",
+                        "file_id": file.id
+                    }
+                ]
+            }
+        ],
+        temperature=0
     )
     return response.output_text
 

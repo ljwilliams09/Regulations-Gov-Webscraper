@@ -3,8 +3,9 @@ import attachments as a
 import comments as c
 from dotenv import load_dotenv
 import openai
-from affiliations.logger_affil import logger
+from logger_affil import logger
 import os
+import json
 import helpers as h
 
 def result(title, comment, organization, gov_agency, summary, affiliation):
@@ -23,8 +24,8 @@ def result(title, comment, organization, gov_agency, summary, affiliation):
         str or None: The determined affiliation of the commenter, or None if no affiliation is found.
     """
     load_dotenv()
-    with open("config.json", 'r') as f:
-        config = f.json()
+    with open("affiliations/config.json", 'r') as f:
+        config = json.load(f)
 
 
     client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -44,15 +45,18 @@ def result(title, comment, organization, gov_agency, summary, affiliation):
         messages=[
             {"role" : "system", "content" : "You are a data analyst who only returns data in the exact format as specified."},
             {"role" : "user", "content" : prompt}
-        ]
+        ],
+        temperature=0
     )
     return response.choices[0].message.content
 
 
 
 def scan():
+    with open("affiliations/config.json") as f:
+        config = json.load(f)
     comments = "affiliations/comments.csv"  # column 0: id
-    results = "affiliations/affiliations.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
+    results = f"affiliations/{config["assessment_model"]}_affiliations.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
 
     with open(comments, 'r') as f:
         reader = csv.reader(f)
