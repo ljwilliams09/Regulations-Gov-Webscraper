@@ -56,7 +56,7 @@ def scan():
     with open("affiliations/config.json") as f:
         config = json.load(f)
     comments = "affiliations/comments.csv"  # column 0: id
-    results = f"affiliations/{config["assessment_model"]}_affiliations.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
+    results = f"affiliations/{config['assessment_model']}_affiliations.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
 
     with open(comments, 'r') as f:
         reader = csv.reader(f)
