@@ -152,6 +152,7 @@ def scan(comment_id):
         if gpt_response == -1:
             continue
         results = gpt_response.split('```')
+        print(f"Results: {results}")
         return results[0], results[1]
-        
+
     return None, None
