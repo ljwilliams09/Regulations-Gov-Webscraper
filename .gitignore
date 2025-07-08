@@ -4,3 +4,4 @@ samplecoding.csv
 comment_data.csv
 chatGPT_500_coding.csv
 excluding_comments_on.csv
+.DS_Store
