@@ -28,8 +28,6 @@ def validate_request(url, params):
         return response.json()
     
 
-
-
 def scan():
     # call should be made from the valid_dockets folder
     input_file = "../dockets.csv" # csv of all dockets
