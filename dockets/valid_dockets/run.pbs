@@ -10,4 +10,4 @@ cd $PBS_WORKDIR
 
 source /local/JupyterHub/bin/activate && conda activate nlp
 
-python valid_dockets.python
+python valid_dockets.py
