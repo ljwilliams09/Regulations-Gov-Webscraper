@@ -32,7 +32,7 @@ def validate_request(url, params):
 
 def scan():
     input_file = "dockets/dockets.csv" # csv of all dockets
-    output_file = "valid_dockets.csv"
+    output_file = "dockets/valid_dockets/valid_dockets.csv"
     document_types = 'document_types.json'
     url = "http://api.regulations.gov/v4/documents"
 
