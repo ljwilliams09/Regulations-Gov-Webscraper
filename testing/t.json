@@ -1,0 +1,59 @@
+{
+  "data" : [ {
+    "id" : "USTR-2005-0001-0001",
+    "type" : "documents",
+    "attributes" : {
+      "documentType" : "Notice",
+      "lastModifiedDate" : "2006-09-03T00:32:33Z",
+      "highlightedContent" : "",
+      "frDocNum" : "05-18822",
+      "withdrawn" : false,
+      "agencyId" : "USTR",
+      "allowLateComments" : false,
+      "commentEndDate" : null,
+      "title" : "Notice of Meeting of the Industry Trade Advisory Committee on Small and Minority Business (ITAC-11)",
+      "postedDate" : "2005-09-21T04:00:00Z",
+      "docketId" : "USTR-2005-0001",
+      "subtype" : null,
+      "commentStartDate" : "2005-09-21T04:00:00Z",
+      "withinCommentPeriod" : false,
+      "openForComment" : false,
+      "objectId" : "090000648004fd4f"
+    },
+    "links" : {
+      "self" : "https://api.regulations.gov/v4/documents/USTR-2005-0001-0001"
+    }
+  } ],
+  "meta" : {
+    "aggregations" : {
+      "documentType" : [ {
+        "docCount" : 1,
+        "label" : "Notice"
+      } ],
+      "subtype" : [ ],
+      "withinCommentPeriod" : [ {
+        "docCount" : 0,
+        "label" : "true"
+      }, {
+        "docCount" : 1,
+        "label" : "false"
+      } ],
+      "agencyId" : [ {
+        "docCount" : 1,
+        "value" : "USTR"
+      } ],
+      "commentEndDate" : [ ],
+      "postedDate" : [ ]
+    },
+    "filters" : { },
+    "hasNextPage" : false,
+    "hasPreviousPage" : false,
+    "numberOfElements" : 1,
+    "pageNumber" : 1,
+    "pageSize" : 250,
+    "totalElements" : 1,
+    "totalPages" : 1,
+    "firstPage" : true,
+    "lastPage" : true
+  }
+}
