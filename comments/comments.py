@@ -87,11 +87,11 @@ def fetch():
     load_dotenv()
     with open('config.json', 'r') as f:
         config = json.load(f)
-    year = config["year"]
+    year = 2022
     api_key = config["on"]
     url = "https://api.regulations.gov/v4/comments"
 
-    output = f"comments{year}.csv"
+    output = f"comments_{year}.csv"
 
     logger.info(f"************ {year} ***********")
 
