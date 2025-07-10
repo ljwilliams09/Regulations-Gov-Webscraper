@@ -1,8 +1,9 @@
 import logging
+import json
 
 logger = logging.getLogger("api_logger")
 with open("config.json", 'r') as c:
-    config = c.json()
+    config = json.load(c)
 
 logger.setLevel(logging.DEBUG)
 
