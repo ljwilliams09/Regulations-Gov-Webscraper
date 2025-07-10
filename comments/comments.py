@@ -45,20 +45,16 @@ def track_id(new_id, ids_set, ids_deque):
 def test_reset_point(url, params, lastModifiedDate, totalElements): 
     hours = 1
     while True:
-        logger.info(f"Testing Reset Point with {hours} hour(s) differential")
-        logger.info(f"totalElements Before: {totalElements}")
         params["filter[lastModifiedDate][ge]"] = date_format_param(lastModifiedDate, diff=hours)
         response = requests.get(url, params=params)
         if response.status_code != 200:
-            if response.status_code == 429:
-                logger.info("Rate limited")                   
+            if response.status_code == 429:                 
                 time.sleep(3600)
                 continue
             else:
                 logger.error(f"Testing error Connecting to API. Params: {params}")
                 break
         new_elements = response.json()["meta"]["totalElements"]
-        logger.info(f"totalElements After: {new_elements}")
         if new_elements >= totalElements - 10000:
             return date_format_param(lastModifiedDate, diff=hours)
         else:
@@ -71,7 +67,6 @@ def validate_request(url, params):
         response = requests.get(url, params=params)
         if response.status_code != 200:
             if response.status_code == 429:
-                logger.info("Rate limited")
                 time.sleep(3600)
                 continue
             else:
@@ -136,7 +131,8 @@ def fetch():
             elif (not comments["meta"]["hasNextPage"]) and comments["meta"]["totalElements"] < 10000:
                 break
             else:
-                logger.info(f"Elements left: {comments['meta']['totalElements']}")
+                logger.info(f"LEFT: {totalElements}")
+                logger.info(f"******** COUNT = {count} ********")
                 logger.info("RESET PARAMETERS")
                 page = 1
                 params["page[number]"] = page
