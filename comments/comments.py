@@ -19,6 +19,8 @@ def normalize_date(date):
     return date.strftime("%Y-%m-%d %H:%M:%S")
 
 def clean_text(text):
+    if text == None:
+        return None
     return text.replace('\r', ' ').replace('\n', ' ').strip()
 
 def track_id(new_id, ids_set, ids_deque):
