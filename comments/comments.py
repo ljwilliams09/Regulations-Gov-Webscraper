@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import time
 import json
 from dotenv import load_dotenv
-from comments.logger_comments import logger
+from logger_comments import logger
 from collections import deque
 
 def year_range(year):
