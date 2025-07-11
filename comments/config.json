@@ -1,9 +1,6 @@
 {
     "year" : 2024,
     "keys" : {
-        "LW" : "",
-        "ES" : "",
-        "AB" : ""
     },
-    "output_path" : "regulations/comment_data/"
+    "output_path" : "../../comment_data"
 }

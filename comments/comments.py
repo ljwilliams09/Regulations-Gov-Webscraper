@@ -82,7 +82,7 @@ def fetch():
     load_dotenv()
     with open('config.json', 'r') as f:
         config = json.load(f)
-    year = 2022
+    year = 2022 
     api_key = config["key"]["-"]
     url = "https://api.regulations.gov/v4/comments"
     path = config["output_path"]
