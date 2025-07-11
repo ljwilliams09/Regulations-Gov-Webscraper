@@ -104,7 +104,7 @@ def fetch():
     }
     with open(output, 'a') as f:
         writer = csv.writer(f)
-        writer.writerow(["id", "title", "postedDate", "lastModifiedDate"])
+        writer.writerow(["id","objectId","title","postedDate","lastModifiedDate"])
         count = 0
         while True:
             response = validate_request(url, params)
@@ -112,14 +112,16 @@ def fetch():
             totalElements = comments["meta"]["totalElements"]
 
             for comment in comments["data"]:
-                if comment["id"] not in ids_set:
+                attributes = comment["attributes"]
+                if attributes["objectId"] not in ids_set:
                     writer.writerow([
                         comment["id"],
-                        clean_text(comment["attributes"]["title"]),
-                        normalize_date(comment["attributes"]["postedDate"]),
-                        normalize_date(comment["attributes"]["lastModifiedDate"])
+                        clean_text(attributes["objectId"]),
+                        clean_text(attributes["title"]),
+                        normalize_date(attributes["postedDate"]),
+                        normalize_date(attributes["lastModifiedDate"])
                     ])
-                    ids_set, ids_deque = track_id(comment["id"], ids_set, ids_deque)
+                    ids_set, ids_deque = track_id(attributes["objectId"], ids_set, ids_deque)
                     count += 1
                 else:
                     logger.info(f"Duplicate on: {comment['id']}")
