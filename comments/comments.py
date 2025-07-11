@@ -129,6 +129,9 @@ def fetch():
                 page += 1
                 params["page[number]"] = page
             elif (not comments["meta"]["hasNextPage"]) and comments["meta"]["totalElements"] < 10000:
+                logger.info(f"******** DONE ********")
+                logger.info(f"******** LEFT: {totalElements} ********")
+                logger.info(f"******** COUNT = {count} ********")
                 break
             else:
                 logger.info(f"LEFT: {totalElements}")
