@@ -83,10 +83,10 @@ def fetch():
     with open('config.json', 'r') as f:
         config = json.load(f)
     year = 2022
-    api_key = config["on"]
+    api_key = config["key"]["-"]
     url = "https://api.regulations.gov/v4/comments"
-
-    output = f"comments_{year}.csv"
+    path = config["output_path"]
+    output = f"{path}csv/comments_{year}.csv"
 
     logger.info(f"************ {year} ***********")
 
