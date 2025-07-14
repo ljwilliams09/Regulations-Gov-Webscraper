@@ -24,7 +24,7 @@ def result(title, comment, organization, gov_agency, summary, affiliation):
         str or None: The determined affiliation of the commenter, or None if no affiliation is found.
     """
     load_dotenv()
-    with open("affiliations/config.json", 'r') as f:
+    with open("./config.json", 'r') as f:
         config = json.load(f)
 
 
@@ -53,10 +53,10 @@ def result(title, comment, organization, gov_agency, summary, affiliation):
 
 
 def scan():
-    with open("affiliations/config.json") as f:
+    with open("./config.json") as f:
         config = json.load(f)
-    comments = "affiliations/comments.csv"  # column 0: id
-    results = f"affiliations/{config['assessment_model']}_affiliations.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
+    comments = "../samplecoded_500_RAW.csv"  # column 0: id
+    results = f"./{config['assessment_model']}_500coded.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
 
     with open(comments, 'r') as f:
         reader = csv.reader(f)

@@ -22,7 +22,7 @@ def client(filename):
         file=open(filename, "rb"),
         purpose="user_data"
     )
-    with open("affiliations/config.json", 'r') as f:
+    with open("./config.json", 'r') as f:
         config = json.load(f)
 
 
@@ -148,8 +148,8 @@ def scan(comment_id):
             os.remove(filename)
         except FileNotFoundError:    
            logger.error("File could not be deleted")
-        
-        if gpt_response == -1:
+        print(f"GPT RESPONSE: {gpt_response}")
+        if gpt_response[0]:
             continue
         results = gpt_response.split('```')
         print(f"Results: {results}")
