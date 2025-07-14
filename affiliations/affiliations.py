@@ -63,7 +63,7 @@ def scan():
         next(f)
         with open(results, 'a') as r:
             writer = csv.writer(r)
-            writer.writerow(["id", "title", "affiliation", "comment", "attachment_summary", "attachment_affiliation"])
+            # writer.writerow(["id", "title", "affiliation", "comment", "attachment_summary", "attachment_affiliation"])
             for row in reader:
                 comment_id = row[0]
                 summary, affiliation = a.scan(comment_id)
