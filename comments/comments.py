@@ -104,7 +104,7 @@ def fetch():
     }
     with open(output, 'a') as f:
         writer = csv.writer(f)
-        writer.writerow(["id","objectId","title","postedDate","lastModifiedDate"])
+        writer.writerow(["id","type","documentType","lastModifiedDate","highlightedContent", "withdrawn", "agencyId", "title", "objectId", "postedDate"])
         count = 0
         while True:
             response = validate_request(url, params)
