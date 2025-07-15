@@ -1,4 +1,4 @@
 {
-    "attachment_model" : "gpt-4-turbo",
-    "assessment_model" : "gpt-4-turbo"
+    "attachment_model" : "gpt-4",
+    "assessment_model" : "gpt-4"
 }
