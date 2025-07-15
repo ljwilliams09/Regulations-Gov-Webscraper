@@ -99,7 +99,7 @@ def get_attachment(comment_id, attachment):
                 raise Exception("Failed to access the comments page after 3 retries")
             time.sleep(2 ** retries) # exponential backoff
 
-def trim_attachment(file, num_pages=5):
+def trim_attachment(file, num_pages=2):
     """
     Trims a PDF file to retain only the first and last `num_pages` pages.
 

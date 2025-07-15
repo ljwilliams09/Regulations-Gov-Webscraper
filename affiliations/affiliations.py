@@ -55,15 +55,15 @@ def result(title, comment, organization, gov_agency, summary, affiliation):
 def scan():
     with open("./config.json") as f:
         config = json.load(f)
-    comments = "./new.csv"  # column 0: id
+    comments = "./secondBatch.csv"  # column 0: id
     results = f"./{config['assessment_model']}_500coded.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
 
     with open(comments, 'r') as f:
         reader = csv.reader(f)
         next(f)
-        with open(results, 'a') as r:
+        with open(results, 'w') as r:
             writer = csv.writer(r)
-            # writer.writerow(["id", "title", "affiliation", "comment", "attachment_summary", "attachment_affiliation"])
+            writer.writerow(["id", "title", "affiliation", "comment", "attachment_summary", "attachment_affiliation"])
             for row in reader:
                 comment_id = row[0]
                 summary, affiliation = a.scan(comment_id)
