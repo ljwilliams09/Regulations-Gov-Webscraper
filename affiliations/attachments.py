@@ -25,19 +25,20 @@ def client(filename):
     with open("./config.json", 'r') as f:
         config = json.load(f)
 
-
     text = """
     You are given a comment from Regulations.gov. Your task is to:
 
-    1. Summarize the comment in 50 words or fewer.
-    2. If the document is supporting material to the comment, only return `-1`.
-    3. Extract the affiliation if possible, if there is none, only return `None`.
+    1. If the document is supporting material to the comment, only return `-1`.
+    2. Extract the affiliation if possible, if there is none, only return `None`.
 
     Respond as:
-    <summary>```<affiliation>
+   <affiliation>
 
-    Example:
-    This rule unfairly burdens small farmers...```National Farmers Union
+    Examples:
+    - National Farmers Union
+    - -1
+    - None
+
     """
 
     response = client.responses.create(

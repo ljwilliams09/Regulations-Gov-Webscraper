@@ -8,7 +8,7 @@ import os
 import json
 import helpers as h
 
-def result(title, comment, organization, gov_agency, summary, affiliation):
+def result(title, comment, organization, gov_agency, attachment):
     """
     Analyzes comment data from regulations.gov and determines the affiliation of the commenter using an OpenAI language model.
 
@@ -30,14 +30,20 @@ def result(title, comment, organization, gov_agency, summary, affiliation):
 
     client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     prompt = (
-        "Here are a variety of variables for a comment on a regulation from regulation.gov, examine them and determine an affiliation for the commenter. Return only the affiliation, or None if there is not one.\n"
+        "Here are a variety of variables for a comment on a regulation from regulation.gov, examine them and determine an affiliation for the commenter.\n"
         "Variables:\n"
-        f"- Title (title of the comment in the database): {title}.\n"
-        f"- Comment (contents of the comment in the database): {comment}\n"
-        f"- Organization (organization of the commenter in the database): {organization}\n"
-        f"- Gov_Agency (agency of the commenter in the database): {gov_agency}\n"
-        f"- Summary (summary of an comment in an attached file): {summary}\n"
-        f"- Affiliation (potential affiliation pulled from the attached file): {affiliation}" 
+        f"- Title: {title}.\n"
+        f"- Comment: {comment}\n"
+        f"- Organization: {organization}\n"
+        f"- Gov_Agency: {gov_agency}\n"
+        f"- attachment: {attachment}"
+
+        "The response should follow these rules:"
+        "1. A list delinated by three backticks (```)"
+        "2. The name of the affiliation if it could be determined from the variable"
+        "3. None if the affiliation could not be determined from that variable" \
+        "Format: title```comment```organization```gov_agency```attachment" \
+        "Example: None```None```Trucking Business LLC.```None```Trucking Business LLC."
     )
 
     response = client.chat.completions.create(
@@ -55,28 +61,28 @@ def result(title, comment, organization, gov_agency, summary, affiliation):
 def scan():
     with open("./config.json") as f:
         config = json.load(f)
-    comments = "./secondBatch.csv"  # column 0: id
-    results = f"./{config['assessment_model']}_500coded.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
+    comments = "./test.csv"  # column 0: id
+    results = f"./output.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
 
     with open(comments, 'r') as f:
         reader = csv.reader(f)
         next(f)
         with open(results, 'w') as r:
             writer = csv.writer(r)
-            writer.writerow(["id", "title", "affiliation", "comment", "attachment_summary", "attachment_affiliation"])
+            writer.writerow(["id", "title", "affiliation", "comment", "attachment"])
             for row in reader:
                 comment_id = row[0]
-                summary, affiliation = a.scan(comment_id)
+                attachment = a.scan(comment_id)
                 title, comment, organization, gov_agency = c.scan(comment_id)
                 logger.info(f"Looking at Comment: {comment_id}")
                 logger.info(f"Title: {title}")
                 logger.info(f"Comment: {comment}")
                 logger.info(f"Organization: {organization}")
                 logger.info(f"Gov_Agency: {gov_agency}")
-                logger.info(f"Summary: {summary}")
-                logger.info(f"Affiliation: {affiliation}")
-                final_affiliation = result(title, comment, organization, gov_agency, summary, affiliation)
-                writer.writerow([h.clean(comment_id), h.clean(title), h.clean(final_affiliation), h.clean(comment), h.clean(summary), h.clean(affiliation)])
-
+                logger.info(f"Attachment: {attachment}")
+                final_affiliation = result(title, comment, organization, gov_agency, attachment)
+                print(final_affiliation.split('```'))
+                writer.writerow([comment_id] + final_affiliation.split("```"))
+ 
 scan()
 
