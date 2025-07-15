@@ -120,7 +120,7 @@ def fetch():
                         clean_text(attributes["documentType"]),
                         normalize_date(attributes["lastModifiedDate"]),
                         clean_text(attributes["highlightedContent"]),
-                        clean_text(attributes["withdrawn"]),
+                        attributes["withdrawn"],
                         clean_text(attributes["agencyId"]),
                         clean_text(attributes["title"]),
                         clean_text(attributes["objectId"]),
