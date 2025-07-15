@@ -115,11 +115,16 @@ def fetch():
                 attributes = comment["attributes"]
                 if attributes["objectId"] not in ids_set:
                     writer.writerow([
-                        comment["id"],
-                        clean_text(attributes["objectId"]),
+                        clean_text(comment["id"]),
+                        clean_text(comment["type"]),
+                        clean_text(attributes["documentType"]),
+                        normalize_date(attributes["lastModifiedDate"]),
+                        clean_text(attributes["highlightedContent"]),
+                        clean_text(attributes["withdrawn"]),
+                        clean_text(attributes["agencyId"]),
                         clean_text(attributes["title"]),
-                        normalize_date(attributes["postedDate"]),
-                        normalize_date(attributes["lastModifiedDate"])
+                        clean_text(attributes["objectId"]),
+                        normalize_date(attributes["postedDate"])
                     ])
                     ids_set, ids_deque = track_id(attributes["objectId"], ids_set, ids_deque)
                     count += 1
