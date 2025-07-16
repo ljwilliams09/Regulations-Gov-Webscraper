@@ -40,8 +40,8 @@ def result(title, comment, organization, gov_agency, attachment):
         f"- Attachment: {attachment}\n\n"
         "### Instructions:\n"
         "1. Respond with a single line of output formatted as follows, using a triple backtick as a delimiter:\n"
-        "[title affiliation]```[comment affiliation]```[organization affiliation]```[government agency affiliation]```[attachment affiliation]\n"
-        "2. For each variable, write the name of the affiliation if it can be reasonably determined.\n"
+        "[affiliation from title]|||[affiliation from comment]|||[affiliation from organization]|||[affiliation from gov agency]|||[affiliation from attachment]" \
+        "2. For each variable, write the name of the affiliation interpreted from that variable alone.\n"
         "3. If no affiliation can be determined from a variable, write 'None' in its place.\n"
         "4. Do not explain or elaborate—just provide the formatted output.\n"
     )
@@ -61,8 +61,8 @@ def result(title, comment, organization, gov_agency, attachment):
 def scan():
     with open("./config.json") as f:
         config = json.load(f)
-    comments = "./test.csv"  # column 0: id
-    results = f"./output.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
+    comments = "./500sample2.csv"  # column 0: id
+    results = f"./500sample2_output.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
 
     with open(comments, 'r') as f:
         reader = csv.reader(f)
