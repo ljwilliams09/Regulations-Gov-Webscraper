@@ -149,11 +149,10 @@ def scan(comment_id):
             os.remove(filename)
         except FileNotFoundError:    
            logger.error("File could not be deleted")
-        print(f"GPT RESPONSE: {gpt_response}")
-        if gpt_response[0]:
+
+        if gpt_response[0] == '-1':
             continue
         results = gpt_response.split('```')
-        print(f"Results: {results}")
         return results[0], results[1]
 
     return None, None

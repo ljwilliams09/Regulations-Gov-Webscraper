@@ -30,20 +30,20 @@ def result(title, comment, organization, gov_agency, attachment):
 
     client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     prompt = (
-        "Here are a variety of variables for a comment on a regulation from regulation.gov, examine them and determine an affiliation for the commenter.\n"
-        "Variables:\n"
-        f"- Title: {title}.\n"
+        "You will be provided with several variables extracted from a public comment on regulation.gov.\n"
+        "Your task is to determine, based solely on the provided variables, whether any affiliation (such as a company, advocacy group, government body, etc.) can be identified.\n\n"
+        "### Variables:\n"
+        f"- Title: {title}\n"
         f"- Comment: {comment}\n"
         f"- Organization: {organization}\n"
-        f"- Gov_Agency: {gov_agency}\n"
-        f"- attachment: {attachment}"
-
-        "The response should follow these rules:"
-        "1. A list delinated by three backticks (```)"
-        "2. The name of the affiliation if it could be determined from the variable"
-        "3. None if the affiliation could not be determined from that variable" \
-        "Format: title```comment```organization```gov_agency```attachment" \
-        "Example: None```None```Trucking Business LLC.```None```Trucking Business LLC."
+        f"- Government Agency: {gov_agency}\n"
+        f"- Attachment: {attachment}\n\n"
+        "### Instructions:\n"
+        "1. Respond with a single line of output formatted as follows, using a triple backtick as a delimiter:\n"
+        "[title affiliation]```[comment affiliation]```[organization affiliation]```[government agency affiliation]```[attachment affiliation]\n"
+        "2. For each variable, write the name of the affiliation if it can be reasonably determined.\n"
+        "3. If no affiliation can be determined from a variable, write 'None' in its place.\n"
+        "4. Do not explain or elaborate—just provide the formatted output.\n"
     )
 
     response = client.chat.completions.create(
@@ -81,7 +81,7 @@ def scan():
                 logger.info(f"Gov_Agency: {gov_agency}")
                 logger.info(f"Attachment: {attachment}")
                 final_affiliation = result(title, comment, organization, gov_agency, attachment)
-                print(final_affiliation.split('```'))
+                print(final_affiliation)
                 writer.writerow([comment_id] + final_affiliation.split("```"))
  
 scan()
