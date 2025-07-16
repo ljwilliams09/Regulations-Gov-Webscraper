@@ -39,9 +39,9 @@ def result(title, comment, organization, gov_agency, attachment):
         f"- Government Agency: {gov_agency}\n"
         f"- Attachment: {attachment}\n\n"
         "### Instructions:\n"
-        "1. Respond with a single line of output formatted as follows, using a triple backtick as a delimiter:\n"
+        "1. Respond with a single line of output formatted as follows:\n"
         "[affiliation from title]|||[affiliation from comment]|||[affiliation from organization]|||[affiliation from gov agency]|||[affiliation from attachment]" \
-        "2. For each variable, write the name of the affiliation interpreted from that variable alone.\n"
+        "2. For each variable, write the name of the affiliation indicated in that variable.\n"
         "3. If no affiliation can be determined from a variable, write 'None' in its place.\n"
         "4. Do not explain or elaborate—just provide the formatted output.\n"
     )
@@ -69,7 +69,7 @@ def scan():
         next(f)
         with open(results, 'w') as r:
             writer = csv.writer(r)
-            writer.writerow(["id", "title", "affiliation", "comment", "attachment"])
+            writer.writerow(["id", "title", "comment", "organization", "agency", "attachment"])
             for row in reader:
                 comment_id = row[0]
                 attachment = a.scan(comment_id)
@@ -82,7 +82,7 @@ def scan():
                 logger.info(f"Attachment: {attachment}")
                 final_affiliation = result(title, comment, organization, gov_agency, attachment)
                 print(final_affiliation)
-                writer.writerow([comment_id] + final_affiliation.split("```"))
+                writer.writerow([comment_id] + final_affiliation.split("|||"))
  
 scan()
 
