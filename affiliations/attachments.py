@@ -137,7 +137,7 @@ def scan(comment_id):
     attachments = helpers.linker(comment_id)
     filename = "temp_attachment.pdf"
     if attachments == 0:
-        return None, None
+        return None
    
     for attachment in range(attachments):
         response = get_attachment(comment_id, attachment+1)
