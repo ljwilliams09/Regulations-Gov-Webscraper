@@ -62,7 +62,7 @@ def scan():
     with open("./config.json") as f:
         config = json.load(f)
     comments = "./500sample2.csv"  # column 0: id
-    results = f"./training_data.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
+    results = f"./meta_data.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
 
     with open(comments, 'r') as f:
         reader = csv.reader(f)
