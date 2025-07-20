@@ -31,7 +31,7 @@ def result(title, comment, organization, gov_agency, attachment):
     client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     prompt = (
         "You will be provided with several variables extracted from a public comment on regulation.gov.\n"
-        "Your task is to determine, based solely on the provided variables, whether any affiliation (such as a company, advocacy group, government body, etc.) can be identified.\n\n"
+        "Your task is to determine, based solely on the provided variables, whether any affiliation (such as a company, advocacy group, government body, etc.) can be identified and whether it is a comment from an individual or not.\n"
         "### Variables:\n"
         f"- Title: {title}\n"
         f"- Comment: {comment}\n"
@@ -40,10 +40,10 @@ def result(title, comment, organization, gov_agency, attachment):
         f"- Attachment: {attachment}\n\n"
         "### Instructions:\n"
         "1. Respond with a single line of output formatted as follows:\n"
-        "[affiliation from title]|||[affiliation from comment]|||[affiliation from organization]|||[affiliation from gov agency]|||[affiliation from attachment]" \
-        "2. For each variable, write the name of the affiliation indicated in that variable.\n"
-        "3. If no affiliation can be determined from a variable, write 'None' in its place.\n"
-        "4. Do not explain or elaborate—just provide the formatted output.\n"
+        "<ORGANIZATION>|||<INDIVIDUAL>" \
+        "2. If no affiliation can be determined from a variable, write 'None' in its place.\n"
+        "3. For individual, respond 1 if this is an individual, or 2 if it is on behalf of an organization."
+        "3. Do not explain or elaborate—just provide the formatted output.\n"
     )
 
     response = client.chat.completions.create(
