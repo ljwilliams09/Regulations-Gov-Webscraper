@@ -61,15 +61,15 @@ def result(title, comment, organization, gov_agency, attachment):
 def scan():
     with open("./config.json") as f:
         config = json.load(f)
-    comments = "./benn_coded.csv"  # column 0: id
-    results = f"./meta_data.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
+    comments = "./finetune_test.csv"  # column 0: id
+    results = f"./finetuned_results.csv" # column 0: id, column 1: title, column 2: affiliation, column 3: comment, column 4: attachment_summary
 
     with open(comments, 'r') as f:
         reader = csv.reader(f)
         next(f)
         with open(results, 'a') as r:
             writer = csv.writer(r)
-            # writer.writerow(["id", "title", "comment", "organization", "agency", "attachment"])
+            writer.writerow(["id", "organizaiton", "individual"])
             for row in reader:
                 comment_id = row[0]
                 attachment = a.scan(comment_id)
@@ -80,10 +80,9 @@ def scan():
                 logger.info(f"Organization: {organization}")
                 logger.info(f"Gov_Agency: {gov_agency}")
                 logger.info(f"Attachment: {attachment}")
-                # final_affiliation = result(title, comment, organization, gov_agency, attachment)
-                # print(final_affiliation)
-                # writer.writerow([comment_id] + final_affiliation.split("|||"))
-                writer.writerow([comment_id, title, comment, organization, gov_agency, attachment])
+                final_affiliation = result(title, comment, organization, gov_agency, attachment)
+                print(final_affiliation)
+                writer.writerow([comment_id] + final_affiliation.split("|||"))
  
 scan()
 

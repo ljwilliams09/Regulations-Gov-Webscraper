@@ -1,4 +1,4 @@
 {
     "attachment_model" : "gpt-4-turbo",
-    "assessment_model" : "gpt-4-turbo"
+    "assessment_model" : "ft:gpt-4.1-2025-04-14:colgate-university:affil-7-20:BvT9J15Q"
 }
