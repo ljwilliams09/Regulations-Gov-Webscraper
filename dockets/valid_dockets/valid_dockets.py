@@ -30,8 +30,8 @@ def validate_request(url, params):
 
 def scan():
     # call should be made from the valid_dockets folder
-    input_file = "../test.csv" # csv of all dockets
-    output_file = "../valid_dockets/valid_dockets.csv"
+    input_file = "./test.csv" # csv of all dockets
+    output_file = "../valid_dockets/test_output.csv"
     document_types = '../valid_dockets/document_types.json'
     url = "http://api.regulations.gov/v4/documents"
 
@@ -39,10 +39,9 @@ def scan():
         reader = csv.reader(i)
         writer = csv.writer(o)
         next(i)
-        with open(document_types, 'r') as dt:
-            types = json.load(dt)
-            writer.writerow(["docketID"] + types)
-            count = {doc_type: 0 for doc_type in types}
+        types = ["Rule", "Proposed Rule", "Supporting & Related Material", "Notice", "Other"]
+        writer.writerow(["docketID"] + types)
+        count = {doc_type: 0 for doc_type in types}
         for docket in reader:
             docketId = docket[0]
             params = {
@@ -52,9 +51,9 @@ def scan():
             response = validate_request(url, params)['meta']['aggregations']['documentType']
             for doc_type in response:
                 count[doc_type['label']] = doc_type['docCount']
-            writer.writerow([docketId] + list(count.values()))
+                print(f"Label: {doc_type['label']}, Count: {doc_type['docCount']}")
+            writer.writerow([docketId] + [count[doc_type] for doc_type in types])
 scan()
-
 
 
 
