@@ -5,7 +5,7 @@ import time
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from collections import deque
-from logger_dockets import logger
+from dockets.valid_dockets.logger_dockets import logger
 
 def track_id(new_id, ids_set, ids_deque):
     if new_id not in ids_set:

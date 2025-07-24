@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import time
 import csv
 import json
+from logger_dockets import logger
 
 
 load_dotenv()
@@ -41,17 +42,18 @@ def scan():
         next(i)
         types = ["Rule", "Proposed Rule", "Supporting & Related Material", "Notice", "Other"]
         writer.writerow(["docketID"] + types)
-        count = {doc_type: 0 for doc_type in types}
         for docket in reader:
+            count = {doc_type: 0 for doc_type in types}
             docketId = docket[0]
             params = {
                 "api_key" : "RWhAaanqXHMC89fGk755BO70rN8ygv1txMawAG3a",
                 "filter[docketId]" : docketId,
             }
             response = validate_request(url, params)['meta']['aggregations']['documentType']
+            logger.info(docketId)
             for doc_type in response:
                 count[doc_type['label']] = doc_type['docCount']
-                print(f"Label: {doc_type['label']}, Count: {doc_type['docCount']}")
+                logger.info(f"Label: {doc_type['label']}, Count: {doc_type['docCount']}")
             writer.writerow([docketId] + [count[doc_type] for doc_type in types])
 scan()
 
