@@ -5,7 +5,9 @@ import time
 import helpers
 import json
 from logger_affil import logger
+from dotenv import load_dotenv
 from pypdf import PdfWriter, PdfReader
+load_dotenv()
 
 def client(filename):
     """

@@ -5,7 +5,6 @@ def load_data():
     with open('meta_data.csv', 'r') as meta, open('training.jsonl', 'w') as output, open('benn_coded.csv', 'r') as benn:
         benn = csv.reader(benn)
         meta = csv.reader(meta)
-        writer = csv.writer(output)
         next(meta)
         next(benn)
 
