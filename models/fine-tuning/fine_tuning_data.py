@@ -2,7 +2,9 @@ import csv
 import json
 
 def load_data():
-    with open('meta_data.csv', 'r') as meta, open('training.jsonl', 'w') as output, open('benn_coded.csv', 'r') as benn:
+    meta_data = "meta_data2.csv"
+    coded_data = "benn_coded2.csv"
+    with open(meta_data, 'r') as meta, open('training.jsonl', 'w') as output, open(coded_data, 'r') as benn:
         benn = csv.reader(benn)
         meta = csv.reader(meta)
         next(meta)
@@ -37,7 +39,7 @@ def load_data():
                 f"- Title: {title}\n"
                 f"- Comment: {comment}\n"
                 f"- Organization: {organization}\n"
-                f"- Government Agency: {gov_agency}\n"
+                f"- Government Agency: {agency}\n"
                 f"- Attachment: {attachment}\n\n"
                 "### Output:\n"
                 "Respond with a single line of output formatted following the guidelines above:\n"

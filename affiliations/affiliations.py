@@ -67,22 +67,24 @@ def scan():
     with open(comments, 'r') as f:
         reader = csv.reader(f)
         next(f)
-        with open(results, 'w ') as r:
+        with open(results, 'w') as r:
             writer = csv.writer(r)
-            writer.writerow(["id", "organizaiton", "individual"])
+            # writer.writerow(["id", "organizaiton", "individual", "expert"]) # for actual evaluations
+            writer.writerow(["id", "title", "comment", "organization", "agency", "attachment"]) # for metadata
             for row in reader:
                 comment_id = row[0]
                 attachment = a.scan(comment_id)
-                title, comment, organization, gov_agency = c.scan(comment_id)
+                title, comment, organization, agency = c.scan(comment_id)
                 logger.info(f"Looking at Comment: {comment_id}")
                 logger.info(f"Title: {title}")
                 logger.info(f"Comment: {comment}")
                 logger.info(f"Organization: {organization}")
-                logger.info(f"Gov_Agency: {gov_agency}")
+                logger.info(f"Gov_Agency: {agency}")
                 logger.info(f"Attachment: {attachment}")
-                final_affiliation = result(title, comment, organization, gov_agency, attachment)
-                print(final_affiliation)
-                writer.writerow([comment_id] + final_affiliation.split("|||"))
+                writer.writerow([comment_id, title, comment, organization, agency, attachment])
+                # final_affiliation = result(title, comment, organization, agency, attachment)
+                # print(final_affiliation)
+                # writer.writerow([comment_id] + final_affiliation.split("|||"))
  
 scan()
 
