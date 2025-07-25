@@ -29,19 +29,19 @@ def load_data():
 
             prompt = (
                 "You will be provided with several variables extracted from a public comment on regulations.gov.\n"
-                "Your task is to determine, based solely on the provided variables, whether any affiliation (such as a company, advocacy group, government body, etc.) can be identified and whether it is a comment from an individual or not.\n"
-                "### Variables:\n"
+                "Your task is to determine, based solely on the provided variables, whether any organizational affiliation can be identified, whether the comment is from an individual or not, and whether the writer is an expert. Here are the guidelines for each output:\n"
+                "Organization: if the comment is written on behalf of an organization (e.g., business, nonprofit, trade association, etc.), or if the comment was submitted by an organization on behalf of an individual, or if the writer identifies as a member of an organization, name that organization. Otherwise give 'None'.\n"
+                "Individual: if the commenter is an individual expressing their own ideas, not writing on behalf of an organization, give 1. Otherwise give 0.\n"
+                "Expert: if the commenter is an individual with a relevant professional qualification (e.g., an employee of a company, an accountant), or if the comment is written on behalf of an organization, give 1. Otherwise give 0.\n"
+                "### Input:\n"
                 f"- Title: {title}\n"
                 f"- Comment: {comment}\n"
                 f"- Organization: {organization}\n"
-                f"- Government Agency: {agency}\n"
+                f"- Government Agency: {gov_agency}\n"
                 f"- Attachment: {attachment}\n\n"
-                "### Instructions:\n"
-                "1. Respond with a single line of output formatted as follows:\n"
-                "   <ORGANIZATION>|||<INDIVIDUAL>\n"
-                "2. If no affiliation can be determined from a variable, write 'None' in its place.\n"
-                "3. For individual, respond 1 if this is an individual, or 2 if it is on behalf of an organization.\n"
-                "4. Do not explain or elaborate—just provide the formatted output.\n"
+                "### Output:\n"
+                "Respond with a single line of output formatted following the guidelines above:\n"
+                "<ORGANIZATION>|||<INDIVIDUAL>|||<EXPERT>"
             )
             example = {
                 "messages" : [
