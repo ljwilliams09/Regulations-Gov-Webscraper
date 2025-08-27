@@ -1,6 +1,6 @@
 {
     "attachment_model" : "gpt-4-turbo",
-    "assessment_model" : "ft:gpt-4.1-2025-04-14:colgate-university:affil-7-20:BvT9J15Q",
-    "comments" : "./benn_coded2.csv",
-    "results" : "./meta_data2.csv"
+    "assessment_model" : "ft:gpt-4.1-2025-04-14:colgate-university:second-tune-scratch:BxDbbHoy",
+    "comments" : "./input2.csv",
+    "results" : "./fine_tune2_base.csv"
 }

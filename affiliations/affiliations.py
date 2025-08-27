@@ -69,8 +69,8 @@ def scan():
         next(f)
         with open(results, 'w') as r:
             writer = csv.writer(r)
-            # writer.writerow(["id", "organizaiton", "individual", "expert"]) # for actual evaluations
-            writer.writerow(["id", "title", "comment", "organization", "agency", "attachment"]) # for metadata
+            writer.writerow(["id", "organizaiton", "individual", "expert"]) # for actual evaluations
+            # writer.writerow(["id", "title", "comment", "organization", "agency", "attachment"]) # for metadata
             for row in reader:
                 comment_id = row[0]
                 attachment = a.scan(comment_id)
@@ -81,10 +81,10 @@ def scan():
                 logger.info(f"Organization: {organization}")
                 logger.info(f"Gov_Agency: {agency}")
                 logger.info(f"Attachment: {attachment}")
-                writer.writerow([comment_id, title, comment, organization, agency, attachment])
-                # final_affiliation = result(title, comment, organization, agency, attachment)
-                # print(final_affiliation)
-                # writer.writerow([comment_id] + final_affiliation.split("|||"))
+                # writer.writerow([comment_id, title, comment, organization, agency, attachment])
+                final_affiliation = result(title, comment, organization, agency, attachment)
+                print(final_affiliation)
+                writer.writerow([comment_id] + final_affiliation.split("|||"))
  
 scan()
 
