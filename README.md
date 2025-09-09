@@ -48,7 +48,7 @@ Output files will be saved in the directory of origin.
 - `attachments.py`: Handles attached files (if present) and evaluates the affiliation and provides a summary.
 - `affiliations.py`: Takes all comment metadata and attachment summary to det
 
-### Testing and Debugging
+### Testing
 
 - Random test files and markdown files used to navigate the regulations.gov API and determine accuracy.
 
